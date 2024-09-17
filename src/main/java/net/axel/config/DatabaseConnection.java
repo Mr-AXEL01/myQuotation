@@ -1,6 +1,6 @@
 package net.axel.config;
 
-import net.axel.utils.env;
+import net.axel.utils.Env;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,9 +33,9 @@ public class DatabaseConnection {
     }
 
     private void init() throws SQLException {
-        final String URL = env.get("URL");
-        final String USER = env.get("USER");
-        final String PASSWORD = env.get("PASSWORD");
+        final String URL = Env.get("URL");
+        final String USER = Env.get("USER");
+        final String PASSWORD = Env.get("PASSWORD");
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
