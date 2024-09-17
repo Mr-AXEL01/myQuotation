@@ -1,7 +1,9 @@
 package net.axel.presentations;
 
+import net.axel.models.dto.ClientDto;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.interfaces.IClientService;
+import net.axel.utils.Validation;
 
 import java.util.Scanner;
 
@@ -52,5 +54,55 @@ public class ClientUi {
         } while (choice != 0);
     }
 
-   
+    private void addClient() {
+        String name;
+        do {
+            System.out.print("Enter name: ");
+            name = scanner.nextLine();
+            if (!Validation.isNotEmpty(name)) {
+                System.out.println("Name cannot be empty. Please enter a valid name.");
+            }
+        } while (!Validation.isNotEmpty(name));
+
+        String address;
+        do {
+            System.out.print("Enter address: ");
+            address = scanner.nextLine();
+            if (!Validation.isNotEmpty(address)) {
+                System.out.println("Address cannot be empty. Please enter a valid address.");
+            }
+        } while (!Validation.isNotEmpty(address));
+
+        String phone;
+        do {
+            System.out.print("Enter phone (06********): ");
+            phone = scanner.nextLine();
+            if (!Validation.isValidPhone(phone)) {
+                System.out.println("Invalid phone number. Please enter a 10-digit phone number.");
+            }
+        } while (!Validation.isValidPhone(phone));
+
+        String isProfessionalInput;
+        Boolean isProfessional = null;
+        do {
+            System.out.print("Is the client a professional (yes/no): ");
+            isProfessionalInput = scanner.nextLine();
+            if (!Validation.isValidBoolean(isProfessionalInput)) {
+                System.out.println("Please answer with 'yes' or 'no'.");
+            } else {
+                isProfessional = isProfessionalInput.equalsIgnoreCase("yes");
+            }
+        } while (!Validation.isValidBoolean(isProfessionalInput));
+
+        ClientDto clientDto = new ClientDto(
+                name,
+                address,
+                phone,
+                isProfessional
+        );
+        
+        clientService.createClient(clientDto);
+
+        System.out.println("Client added successfully.");
+    }
 }
