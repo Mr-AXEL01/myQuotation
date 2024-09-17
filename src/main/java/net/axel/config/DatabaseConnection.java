@@ -1,5 +1,7 @@
 package net.axel.config;
 
+import net.axel.utils.env;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -31,9 +33,9 @@ public class DatabaseConnection {
     }
 
     private void init() throws SQLException {
-        final String URL = "jdbc:postgresql://localhost:5432/ecomove";
-        final String USER = "axel";
-        final String PASSWORD = "6631";
+        final String URL = env.get("URL");
+        final String USER = env.get("USER");
+        final String PASSWORD = env.get("PASSWORD");
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
