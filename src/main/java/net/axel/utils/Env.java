@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class env {
+public class Env {
     private static final Map<String, String> envVariables = new HashMap<>();
 
-    private env() {
+    private Env() {
     }
 
     static {
-        synchronized (env.class) {
+        synchronized (Env.class) {
             if (envVariables.isEmpty()) {
                 String filePath = ".env";
 
