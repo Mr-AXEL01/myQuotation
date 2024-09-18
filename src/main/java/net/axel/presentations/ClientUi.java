@@ -128,4 +128,17 @@ public class ClientUi {
     }
 
     
+
+    private void deleteClient() {
+        System.out.print("Enter the name of the client to delete: ");
+        String name = scanner.nextLine();
+
+        Optional<ClientDto> client = clientService.getClientByName(name);
+        if (client.isPresent()) {
+            clientService.deleteClient(name);
+            System.out.println("Client deleted successfully.");
+        } else {
+            System.out.println("Client not found.");
+        }
+    }
 }
