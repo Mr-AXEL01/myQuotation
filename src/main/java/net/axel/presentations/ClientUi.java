@@ -127,7 +127,47 @@ public class ClientUi {
         }
     }
 
-    
+    private void updateClient() {
+        System.out.print("Enter the name of the client to update: ");
+        String name = scanner.nextLine();
+
+        Optional<ClientDto> clientOptional = clientService.getClientByName(name);
+        if (clientOptional.isPresent()) {
+            ClientDto existingClient = clientOptional.get();
+
+            System.out.print("Enter new name (or press Enter to keep '" + existingClient.name() + "'): ");
+            String newName = scanner.nextLine();
+            newName = newName.isEmpty() ? existingClient.name() : newName;
+
+            System.out.print("Enter new address (or press Enter to keep '" + existingClient.address() + "'): ");
+            String newAddress = scanner.nextLine();
+            newAddress = newAddress.isEmpty() ? existingClient.address() : newAddress;
+
+            System.out.print("Enter new phone (or press Enter to keep '" + existingClient.phone() + "'): ");
+            String newPhone = scanner.nextLine();
+            newPhone = newPhone.isEmpty() ? existingClient.phone() : newPhone;
+
+            Boolean isProfessional = existingClient.isProfessional();
+            String isProfessionalInput;
+            do {
+                System.out.print("Is the client a professional (yes/no) (or press Enter to keep current): ");
+                isProfessionalInput = scanner.nextLine();
+                if (!isProfessionalInput.isEmpty()) {
+                    if (!Validation.isValidBoolean(isProfessionalInput)) {
+                        System.out.println("Please answer with 'yes' or 'no'.");
+                    } else {
+                        isProfessional = isProfessionalInput.equalsIgnoreCase("yes");
+                    }
+                }
+            } while (!isProfessionalInput.isEmpty() && !Validation.isValidBoolean(isProfessionalInput));
+
+            ClientDto updatedClient = new ClientDto(newName, newAddress, newPhone, isProfessional);
+            clientService.updateClient(existingClient.name(), updatedClient);
+            System.out.println("Client updated successfully.");
+        } else {
+            System.out.println("Client not found.");
+        }
+    }
 
     private void deleteClient() {
         System.out.print("Enter the name of the client to delete: ");
