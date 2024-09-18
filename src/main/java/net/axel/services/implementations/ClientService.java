@@ -18,7 +18,7 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public void addClient(ClientDto clientDto) {
+    public Client addClient(ClientDto clientDto) {
         if (clientExists(clientDto.name())) {
             throw new IllegalArgumentException("Client with name " + clientDto.name() + " already exists.");
         }
@@ -29,37 +29,25 @@ public class ClientService implements IClientService {
                 clientDto.phone(),
                 clientDto.isProfessional()
         );
-        clientRepository.add(client);
+        return clientRepository.addClient(client);
     }
 
     @Override
-    public Optional<ClientDto> findClientByName(String name) {
+    public Optional<Client> findClientByName(String name) {
         return clientRepository.findClientByName(name)
-                .map(client -> new ClientDto(
-                        client.getId(),
-                        client.getName(),
-                        client.getAddress(),
-                        client.getPhone(),
-                        client.getIsProfessional()
-                ));
+                .map(client -> new Client());
     }
 
     @Override
-    public List<ClientDto> findAllClients() {
+    public List<Client> findAllClients() {
         List<Client> clients = clientRepository.findAllClients();
         return clients.stream()
-                .map(client -> new ClientDto(
-                        client.getId(),
-                        client.getName(),
-                        client.getAddress(),
-                        client.getPhone(),
-                        client.getIsProfessional()
-                ))
+                .map(client -> new Client())
                 .toList();
     }
 
     @Override
-    public void updateClient(String oldName, ClientDto updatedClientDto) {
+        public Client updateClient(String oldName, ClientDto updatedClientDto) {
         Optional<Client> existingClientOptional = clientRepository.findClientByName(oldName);
 
         if (existingClientOptional.isEmpty()) {
@@ -76,7 +64,7 @@ public class ClientService implements IClientService {
                 updatedClientDto.isProfessional() != null ? updatedClientDto.isProfessional() : existingClient.getIsProfessional()
         );
 
-        clientRepository.update(oldName, updatedClient);
+        return clientRepository.updateClient(oldName, updatedClient);
     }
 
     @Override
@@ -84,7 +72,7 @@ public class ClientService implements IClientService {
         if (!clientExists(name)) {
             throw new IllegalArgumentException("Client with name " + name + " does not exist.");
         }
-        clientRepository.delete(name);
+        clientRepository.deleteClient(name);
     }
 
     private boolean clientExists(String name) {
