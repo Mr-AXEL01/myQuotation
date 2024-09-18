@@ -34,10 +34,10 @@ public class ClientUi {
                     addClient();
                     break;
                 case 2:
-                    getClientByName();
+                    findClientByName();
                     break;
                 case 3:
-                    getAllClients();
+                    findAllClients();
                     break;
                 case 4:
                     updateClient();
@@ -100,9 +100,23 @@ public class ClientUi {
                 phone,
                 isProfessional
         );
-        
+
         clientService.createClient(clientDto);
 
         System.out.println("Client added successfully.");
     }
+
+    private void findClientByName() {
+        System.out.print("Enter the client's name: ");
+        String name = scanner.nextLine();
+
+        Optional<ClientDto> client = clientService.getClientByName(name);
+        if (client.isPresent()) {
+            System.out.println("Client found: " + client.get());
+        } else {
+            System.out.println("Client not found.");
+        }
+    }
+
+    
 }
