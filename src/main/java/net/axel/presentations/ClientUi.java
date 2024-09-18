@@ -5,6 +5,8 @@ import net.axel.services.implementations.ClientService;
 import net.axel.services.interfaces.IClientService;
 import net.axel.utils.Validation;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ClientUi {
@@ -64,6 +66,13 @@ public class ClientUi {
             }
         } while (!Validation.isNotEmpty(name));
 
+        // check if the client already exists
+//        Optional<ClientDto> clientOptional = getClientByName(name);
+//        if (clientOptional.isPresent()) {
+//            System.out.println("Client already exists.");
+//            return;
+//        }
+
         String address;
         do {
             System.out.print("Enter address: ");
@@ -101,8 +110,7 @@ public class ClientUi {
                 isProfessional
         );
 
-        clientService.createClient(clientDto);
-
+        clientService.addClient(clientDto);
         System.out.println("Client added successfully.");
     }
 
@@ -110,7 +118,7 @@ public class ClientUi {
         System.out.print("Enter the client's name: ");
         String name = scanner.nextLine();
 
-        Optional<ClientDto> client = clientService.getClientByName(name);
+        Optional<ClientDto> client = getClientByName(name);
         if (client.isPresent()) {
             System.out.println("Client found: " + client.get());
         } else {
@@ -119,7 +127,7 @@ public class ClientUi {
     }
 
     private void findAllClients() {
-        List<ClientDto> clients = clientService.getAllClients();
+        List<ClientDto> clients = clientService.findAllClients();
         if (clients.isEmpty()) {
             System.out.println("No clients found.");
         } else {
@@ -131,7 +139,7 @@ public class ClientUi {
         System.out.print("Enter the name of the client to update: ");
         String name = scanner.nextLine();
 
-        Optional<ClientDto> clientOptional = clientService.getClientByName(name);
+        Optional<ClientDto> clientOptional = getClientByName(name);
         if (clientOptional.isPresent()) {
             ClientDto existingClient = clientOptional.get();
 
@@ -173,12 +181,16 @@ public class ClientUi {
         System.out.print("Enter the name of the client to delete: ");
         String name = scanner.nextLine();
 
-        Optional<ClientDto> client = clientService.getClientByName(name);
+        Optional<ClientDto> client = getClientByName(name);
         if (client.isPresent()) {
             clientService.deleteClient(name);
             System.out.println("Client deleted successfully.");
         } else {
             System.out.println("Client not found.");
         }
+    }
+
+    private Optional<ClientDto> getClientByName(String name) {
+        return clientService.findClientByName(name);
     }
 }
