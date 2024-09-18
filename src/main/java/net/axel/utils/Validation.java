@@ -28,7 +28,7 @@ public class Validation {
 
 
     public static boolean isValidBoolean(String input) {
-        return input.equalsIgnoreCase("true") || input.equalsIgnoreCase("false");
+        return input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("no");
     }
 
 }
