@@ -46,14 +46,7 @@ public class ClientRepository implements IClientRepository {
             stmt.setString(1, name);
             try(ResultSet rst = stmt.executeQuery()) {
                 if(rst.next()) {
-                    UUID clientId          = UUID.fromString(rst.getString("id"));
-                    String clientName      = rst.getString("name");
-                    String address         = rst.getString("address");
-                    String phone           = rst.getString("phone");
-                    Boolean isProfessional = rst.getBoolean("is_professional");
-
-                    Client client = new Client(clientId, clientName, address, phone, isProfessional);
-                    return Optional.of(client);
+                    return Optional.of(mapToClient(rst));
                 }
             }
         } catch(SQLException e) {
@@ -70,20 +63,23 @@ public class ClientRepository implements IClientRepository {
             ResultSet rst = stmt.executeQuery(query);
 
             while (rst.next()) {
-                UUID clientId          = UUID.fromString(rst.getString("id"));
-                String clientName      = rst.getString("name");
-                String address         = rst.getString("address");
-                String phone           = rst.getString("phone");
-                Boolean isProfessional = rst.getBoolean("is_professional");
-
-                Client client = new Client(clientId, clientName, address, phone, isProfessional);
-                clients.add(client);
+                clients.add(mapToClient(rst));
             }
 
         } catch(SQLException e) {
             throw new RuntimeException("Error retrieving all clients." + e.getMessage());
         }
         return clients;
+    }
+
+    private Client mapToClient(ResultSet rst) throws SQLException {
+        UUID clientId          = UUID.fromString(rst.getString("id"));
+        String clientName      = rst.getString("name");
+        String address         = rst.getString("address");
+        String phone           = rst.getString("phone");
+        Boolean isProfessional = rst.getBoolean("is_professional");
+
+        return new Client(clientId, clientName, address, phone, isProfessional);
     }
 
 }
