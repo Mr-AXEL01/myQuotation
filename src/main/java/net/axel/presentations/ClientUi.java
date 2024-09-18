@@ -118,5 +118,14 @@ public class ClientUi {
         }
     }
 
+    private void findAllClients() {
+        List<ClientDto> clients = clientService.getAllClients();
+        if (clients.isEmpty()) {
+            System.out.println("No clients found.");
+        } else {
+            clients.forEach(client -> System.out.println(client));
+        }
+    }
+
     
 }
