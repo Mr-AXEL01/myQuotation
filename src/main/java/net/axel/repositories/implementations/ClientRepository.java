@@ -4,10 +4,8 @@ import net.axel.config.DatabaseConnection;
 import net.axel.models.entities.Client;
 import net.axel.repositories.interfaces.IClientRepository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,6 +51,7 @@ public class ClientRepository implements IClientRepository {
                     String address         = rst.getString("address");
                     String phone           = rst.getString("phone");
                     Boolean isProfessional = rst.getBoolean("is_professional");
+
                     Client client = new Client(clientId, clientName, address, phone, isProfessional);
                     return Optional.of(client);
                 }
@@ -61,6 +60,30 @@ public class ClientRepository implements IClientRepository {
             throw new RuntimeException("Error finding client by name in the database.", e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public List<Client> findAllClients() {
+        final String query = "SELECT * FROM " + tableName ;
+        List<Client> clients = new ArrayList<>();
+        try(Statement stmt = connection.createStatement()) {
+            ResultSet rst = stmt.executeQuery(query);
+
+            while (rst.next()) {
+                UUID clientId          = UUID.fromString(rst.getString("id"));
+                String clientName      = rst.getString("name");
+                String address         = rst.getString("address");
+                String phone           = rst.getString("phone");
+                Boolean isProfessional = rst.getBoolean("is_professional");
+
+                Client client = new Client(clientId, clientName, address, phone, isProfessional);
+                clients.add(client);
+            }
+
+        } catch(SQLException e) {
+            throw new RuntimeException("Error retrieving all clients." + e.getMessage());
+        }
+        return clients;
     }
 
 }
