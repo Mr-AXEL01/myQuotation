@@ -11,6 +11,9 @@ public class Client {
 //    private List<Project> projects;
 
 
+    public Client() {
+    }
+
     public Client(UUID id, String name, String address, String phone, Boolean isProfessional) {
         this.id = id;
         this.name = name;
