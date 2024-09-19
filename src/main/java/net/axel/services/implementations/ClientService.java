@@ -34,16 +34,12 @@ public class ClientService implements IClientService {
 
     @Override
     public Optional<Client> findClientByName(String name) {
-        return clientRepository.findClientByName(name)
-                .map(client -> new Client());
+        return clientRepository.findClientByName(name);
     }
 
     @Override
     public List<Client> findAllClients() {
-        List<Client> clients = clientRepository.findAllClients();
-        return clients.stream()
-                .map(client -> new Client())
-                .toList();
+        return clientRepository.findAllClients();
     }
 
     @Override
