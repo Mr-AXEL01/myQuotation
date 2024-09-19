@@ -43,7 +43,7 @@ public class ClientService implements IClientService {
     }
 
     @Override
-        public Client updateClient(String oldName, ClientDto updatedClientDto) {
+    public Client updateClient(String oldName, ClientDto updatedClientDto) {
         Optional<Client> existingClientOptional = clientRepository.findClientByName(oldName);
 
         if (existingClientOptional.isEmpty()) {
