@@ -1,12 +1,15 @@
 package net.axel;
 
 import net.axel.config.DatabaseConnection;
+import net.axel.presentations.ClientUi;
+import net.axel.repositories.implementations.ClientRepository;
+import net.axel.services.implementations.ClientService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         System.out.println("Hello world!");
 
 //        try {
@@ -19,6 +22,10 @@ public class Main {
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
+
+         // Adjust if necessary
+        ClientUi clientUi = new ClientUi(new ClientService(new ClientRepository()));
+        clientUi.showMenu();
     }
 
 }

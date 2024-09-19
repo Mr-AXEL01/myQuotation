@@ -68,18 +68,18 @@ public class ClientUi {
         Client addedClient = clientService.addClient(clientDto);
 
         System.out.println("\nClient added successfully , Here are the details:");
-        tableHeader();
-        tableBody(addedClient);
+        clientHelper.tableHeader();
+        clientHelper.tableBody(addedClient);
     }
-    
+
     private void findClientByName() {
         String name = clientHelper.promptForName();
 
         Optional<Client> client = clientService.findClientByName(name);
         if (client.isPresent()) {
             System.out.println("\nHere are the details:");
-            tableHeader();
-            tableBody(client.get());
+            clientHelper.tableHeader();
+            clientHelper.tableBody(client.get());
         } else {
             System.out.println("Client not found.");
         }
@@ -90,9 +90,9 @@ public class ClientUi {
         if (clients.isEmpty()) {
             System.out.println("No clients found.");
         } else {
-            tableHeader();
+            clientHelper.tableHeader();
             for (Client client : clients) {
-                tableBody(client);
+                clientHelper.tableBody(client);
             }
         }
     }
@@ -105,8 +105,8 @@ public class ClientUi {
             Client existingClient = clientOptional.get();
 
             System.out.println("\nHere are the details:");
-            tableHeader();
-            tableBody(existingClient);
+            clientHelper.tableHeader();
+            clientHelper.tableBody(existingClient);
 
             System.out.print("Enter new name (or press Enter to keep '" + existingClient.getName() + "'): ");
             String newName = clientHelper.getScanner().nextLine();
@@ -137,8 +137,8 @@ public class ClientUi {
             ClientDto updatedClient = new ClientDto(newName, newAddress, newPhone, isProfessional);
             Client newClient = clientService.updateClient(existingClient.getName(), updatedClient);
             System.out.println("\nClient updated successfully, here are the details:");
-            tableHeader();
-            tableBody(newClient);
+            clientHelper.tableHeader();
+            clientHelper.tableBody(newClient);
         } else {
             System.out.println("Client not found.");
         }
@@ -153,31 +153,6 @@ public class ClientUi {
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    private void tableHeader() {
-        System.out.println("|--------------------------------------------------------------"
-                + "--------------------------------------------------|");
-        System.out.printf("|%-38s | %-6s | %-30s | %-10s | %-16s|%n",
-                "ID", "Name", "Address", "Phone", "Professional");
-        System.out.println("|--------------------------------------------------------------"
-                + "--------------------------------------------------|");
-    }
-
-    private void tableBody(Client client) {
-        String professionalStatus = (client.getIsProfessional() != null)
-                ? (client.getIsProfessional() ? "Professional" : "Normal client")
-                : "Unknown";
-
-
-        System.out.printf("| %-38s| %-6s | %-30s | %-10s | %-16s|%n",
-                client.getId(),
-                client.getName(),
-                client.getAddress(),
-                client.getPhone(),
-                professionalStatus);
-        System.out.println("|--------------------------------------------------------------"
-                + "--------------------------------------------------|");
     }
 
 }
