@@ -1,6 +1,8 @@
 package net.axel.presentations;
 
+import net.axel.helpers.ClientHelper;
 import net.axel.models.dto.ClientDto;
+import net.axel.models.entities.Client;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.interfaces.IClientService;
 import net.axel.utils.Validation;
@@ -11,11 +13,11 @@ import java.util.Scanner;
 
 public class ClientUi {
     private final IClientService clientService;
-    private final Scanner scanner;
+    private final ClientHelper clientHelper;
 
     public ClientUi(ClientService clientService) {
         this.clientService = clientService;
-        this.scanner = new Scanner(System.in);
+        this.clientHelper = new ClientHelper(new Scanner(System.in));
     }
 
     public void showMenu() {
@@ -29,7 +31,7 @@ public class ClientUi {
             System.out.println("5. Delete Client");
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            choice = Integer.parseInt(clientHelper.getScanner().nextLine());
 
             switch (choice) {
                 case 1:
@@ -57,109 +59,72 @@ public class ClientUi {
     }
 
     private void addClient() {
-        String name;
-        do {
-            System.out.print("Enter name: ");
-            name = scanner.nextLine();
-            if (!Validation.isNotEmpty(name)) {
-                System.out.println("Name cannot be empty. Please enter a valid name.");
-            }
-        } while (!Validation.isNotEmpty(name));
+        String name = clientHelper.promptForName();
+        String address = clientHelper.promptForAddress();
+        String phone = clientHelper.promptForPhone();
+        Boolean isProfessional = clientHelper.promptForProfessionalStatus();
 
-        // check if the client already exists
-//        Optional<ClientDto> clientOptional = getClientByName(name);
-//        if (clientOptional.isPresent()) {
-//            System.out.println("Client already exists.");
-//            return;
-//        }
+        ClientDto clientDto = new ClientDto(name, address, phone, isProfessional);
+        Client addedClient = clientService.addClient(clientDto);
 
-        String address;
-        do {
-            System.out.print("Enter address: ");
-            address = scanner.nextLine();
-            if (!Validation.isNotEmpty(address)) {
-                System.out.println("Address cannot be empty. Please enter a valid address.");
-            }
-        } while (!Validation.isNotEmpty(address));
-
-        String phone;
-        do {
-            System.out.print("Enter phone (06********): ");
-            phone = scanner.nextLine();
-            if (!Validation.isValidPhone(phone)) {
-                System.out.println("Invalid phone number. Please enter a 10-digit phone number.");
-            }
-        } while (!Validation.isValidPhone(phone));
-
-        String isProfessionalInput;
-        Boolean isProfessional = null;
-        do {
-            System.out.print("Is the client a professional (yes/no): ");
-            isProfessionalInput = scanner.nextLine();
-            if (!Validation.isValidBoolean(isProfessionalInput)) {
-                System.out.println("Please answer with 'yes' or 'no'.");
-            } else {
-                isProfessional = isProfessionalInput.equalsIgnoreCase("yes");
-            }
-        } while (!Validation.isValidBoolean(isProfessionalInput));
-
-        ClientDto clientDto = new ClientDto(
-                name,
-                address,
-                phone,
-                isProfessional
-        );
-
-        clientService.addClient(clientDto);
-        System.out.println("Client added successfully.");
+        System.out.println("\nClient added successfully , Here are the details:");
+        tableHeader();
+        tableBody(addedClient);
     }
-
+    
     private void findClientByName() {
-        System.out.print("Enter the client's name: ");
-        String name = scanner.nextLine();
+        String name = clientHelper.promptForName();
 
-        Optional<ClientDto> client = getClientByName(name);
+        Optional<Client> client = clientService.findClientByName(name);
         if (client.isPresent()) {
-            System.out.println("Client found: " + client.get());
+            System.out.println("\nHere are the details:");
+            tableHeader();
+            tableBody(client.get());
         } else {
             System.out.println("Client not found.");
         }
     }
 
     private void findAllClients() {
-        List<ClientDto> clients = clientService.findAllClients();
+        List<Client> clients = clientService.findAllClients();
         if (clients.isEmpty()) {
             System.out.println("No clients found.");
         } else {
-            clients.forEach(client -> System.out.println(client));
+            tableHeader();
+            for (Client client : clients) {
+                tableBody(client);
+            }
         }
     }
 
     private void updateClient() {
-        System.out.print("Enter the name of the client to update: ");
-        String name = scanner.nextLine();
+        String name = clientHelper.promptForName();
 
-        Optional<ClientDto> clientOptional = getClientByName(name);
+        Optional<Client> clientOptional = clientService.findClientByName(name);
         if (clientOptional.isPresent()) {
-            ClientDto existingClient = clientOptional.get();
+            Client existingClient = clientOptional.get();
 
-            System.out.print("Enter new name (or press Enter to keep '" + existingClient.name() + "'): ");
-            String newName = scanner.nextLine();
-            newName = newName.isEmpty() ? existingClient.name() : newName;
+            System.out.println("\nHere are the details:");
+            tableHeader();
+            tableBody(existingClient);
 
-            System.out.print("Enter new address (or press Enter to keep '" + existingClient.address() + "'): ");
-            String newAddress = scanner.nextLine();
-            newAddress = newAddress.isEmpty() ? existingClient.address() : newAddress;
+            System.out.print("Enter new name (or press Enter to keep '" + existingClient.getName() + "'): ");
+            String newName = clientHelper.getScanner().nextLine();
+            newName = newName.isEmpty() ? existingClient.getName() : newName;
 
-            System.out.print("Enter new phone (or press Enter to keep '" + existingClient.phone() + "'): ");
-            String newPhone = scanner.nextLine();
-            newPhone = newPhone.isEmpty() ? existingClient.phone() : newPhone;
+            System.out.print("Enter new address (or press Enter to keep '" + existingClient.getAddress() + "'): ");
+            String newAddress = clientHelper.getScanner().nextLine();
+            newAddress = newAddress.isEmpty() ? existingClient.getAddress() : newAddress;
 
-            Boolean isProfessional = existingClient.isProfessional();
+            System.out.print("Enter new phone (or press Enter to keep '" + existingClient.getPhone() + "'): ");
+            String newPhone = clientHelper.getScanner().nextLine();
+            newPhone = newPhone.isEmpty() ? existingClient.getPhone() : newPhone;
+
+            Boolean isProfessional = existingClient.getIsProfessional();
             String isProfessionalInput;
             do {
                 System.out.print("Is the client a professional (yes/no) (or press Enter to keep current): ");
-                isProfessionalInput = scanner.nextLine();
+                isProfessionalInput = clientHelper.getScanner().nextLine();
                 if (!isProfessionalInput.isEmpty()) {
                     if (!Validation.isValidBoolean(isProfessionalInput)) {
                         System.out.println("Please answer with 'yes' or 'no'.");
@@ -170,27 +135,49 @@ public class ClientUi {
             } while (!isProfessionalInput.isEmpty() && !Validation.isValidBoolean(isProfessionalInput));
 
             ClientDto updatedClient = new ClientDto(newName, newAddress, newPhone, isProfessional);
-            clientService.updateClient(existingClient.name(), updatedClient);
-            System.out.println("Client updated successfully.");
+            Client newClient = clientService.updateClient(existingClient.getName(), updatedClient);
+            System.out.println("\nClient updated successfully, here are the details:");
+            tableHeader();
+            tableBody(newClient);
         } else {
             System.out.println("Client not found.");
         }
     }
 
     private void deleteClient() {
-        System.out.print("Enter the name of the client to delete: ");
-        String name = scanner.nextLine();
+        String name = clientHelper.promptForName();
 
-        Optional<ClientDto> client = getClientByName(name);
-        if (client.isPresent()) {
+        try {
             clientService.deleteClient(name);
             System.out.println("Client deleted successfully.");
-        } else {
-            System.out.println("Client not found.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    private Optional<ClientDto> getClientByName(String name) {
-        return clientService.findClientByName(name);
+    private void tableHeader() {
+        System.out.println("|--------------------------------------------------------------"
+                + "--------------------------------------------------|");
+        System.out.printf("|%-38s | %-6s | %-30s | %-10s | %-16s|%n",
+                "ID", "Name", "Address", "Phone", "Professional");
+        System.out.println("|--------------------------------------------------------------"
+                + "--------------------------------------------------|");
     }
+
+    private void tableBody(Client client) {
+        String professionalStatus = (client.getIsProfessional() != null)
+                ? (client.getIsProfessional() ? "Professional" : "Normal client")
+                : "Unknown";
+
+
+        System.out.printf("| %-38s| %-6s | %-30s | %-10s | %-16s|%n",
+                client.getId(),
+                client.getName(),
+                client.getAddress(),
+                client.getPhone(),
+                professionalStatus);
+        System.out.println("|--------------------------------------------------------------"
+                + "--------------------------------------------------|");
+    }
+
 }
