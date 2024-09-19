@@ -1,21 +1,20 @@
 package net.axel.services.interfaces;
 
 import net.axel.models.dto.ClientDto;
+import net.axel.models.entities.Client;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IClientService {
 
-    void addClient(ClientDto clientDto);
+    Client addClient(ClientDto clientDto);
 
-    Optional<ClientDto> findClientByName(String name);
+    Optional<Client> findClientByName(String name);
 
-    List<ClientDto> findAllClients();
+    List<Client> findAllClients();
 
-    void updateClient(String oldName, ClientDto updatedClient);
+    Client updateClient(String oldName, ClientDto updatedClient);
 
     void deleteClient(String name);
-}
-
 }
