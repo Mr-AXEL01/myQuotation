@@ -13,6 +13,8 @@ public class Project {
     private Double totalCost;
     private ProjectStatus projectStatus;
     private Client client;
+//    private List<Quote> quotes;
+//    private List<Component> components;
 
     public Project() {
     }
@@ -82,4 +84,5 @@ public class Project {
     public void setClient(Client client) {
         this.client = client;
     }
+
 }
