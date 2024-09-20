@@ -2,12 +2,13 @@ package net.axel.repositories.implementations;
 
 import net.axel.config.DatabaseConnection;
 import net.axel.models.entities.Project;
+import net.axel.repositories.interfaces.IprojectRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ProjectRepository {
+public class ProjectRepository implements IprojectRepository {
 
     private final String tableName = "projects";
     private final Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -15,6 +16,7 @@ public class ProjectRepository {
     public ProjectRepository() throws SQLException {
     }
 
+    @Override
     public Project addProject(Project project) {
         final String query = "INSERT INTO " + tableName + " (id, name, surface, profit_margin, total_cost, project_status, client_id)" +
                 " VALUES(?, ?, ?, ?, ?, ?:ProjectStatus, ?)";
@@ -36,7 +38,7 @@ public class ProjectRepository {
         }
         return project;
     }
-    
+
 
 
 }
