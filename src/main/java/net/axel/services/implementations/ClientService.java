@@ -38,6 +38,11 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    Optional<Client> findClientById(UUID id) {
+        return clientRepository.findClientById(id);
+    }
+
+    @Override
     public List<Client> findAllClients() {
         return clientRepository.findAllClients();
     }
