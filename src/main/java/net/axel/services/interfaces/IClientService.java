@@ -13,7 +13,7 @@ public interface IClientService {
 
     Optional<Client> findClientByName(String name);
 
-    Optional<Client> findClientById(UUID id);
+    Client findClientById(UUID id);
 
     List<Client> findAllClients();
 

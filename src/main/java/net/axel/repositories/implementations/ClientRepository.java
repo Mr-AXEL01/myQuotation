@@ -56,6 +56,22 @@ public class ClientRepository implements IClientRepository {
     }
 
     @Override
+    public Optional<Client> findClientById(UUID id){
+        final String query = "SELECT * FROM " + tableName + " WHERE id = ? AND deleted_at IS NULL";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setObject(1, id);
+            try (ResultSet rst = stmt.executeQuery()) {
+                if (rst.next()) {
+                    return Optional.of(mapToClient(rst));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding client by id: " + e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public List<Client> findAllClients() {
         final String query = "SELECT * FROM " + tableName + " WHERE deleted_at IS NULL";
         List<Client> clients = new ArrayList<>();

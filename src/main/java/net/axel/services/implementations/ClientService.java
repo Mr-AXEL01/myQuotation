@@ -38,8 +38,9 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    Optional<Client> findClientById(UUID id) {
-        return clientRepository.findClientById(id);
+    public Client findClientById(UUID id) {
+        return clientRepository.findClientById(id)
+                .orElseThrow(() -> new RuntimeException("Error find client By ID : " + id));
     }
 
     @Override
