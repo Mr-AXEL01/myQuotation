@@ -2,8 +2,11 @@ package net.axel;
 
 import net.axel.config.DatabaseConnection;
 import net.axel.presentations.ClientUi;
+import net.axel.presentations.ProjectUi;
 import net.axel.repositories.implementations.ClientRepository;
+import net.axel.repositories.implementations.ProjectRepository;
 import net.axel.services.implementations.ClientService;
+import net.axel.services.implementations.ProjectService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,8 +27,11 @@ public class Main {
 //        }
 
          // Adjust if necessary
-        ClientUi clientUi = new ClientUi(new ClientService(new ClientRepository()));
-        clientUi.showMenu();
+//        ClientUi clientUi = new ClientUi(new ClientService(new ClientRepository()));
+//        clientUi.showMenu();
+
+        ProjectUi projectUi = new ProjectUi(new ProjectService(new ProjectRepository(), new ClientService(new ClientRepository())));
+        projectUi.showMenu();
     }
 
 }

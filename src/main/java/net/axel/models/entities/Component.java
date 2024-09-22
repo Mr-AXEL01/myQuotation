@@ -16,7 +16,7 @@ public class Component {
     private Project project;
 
     public Component () {
-        
+
     }
 
     public Component(UUID id, String componentName, Double unitCost, Double quantityOrDuration, Double vat, ComponentType componentType, Double efficiencyFactor, Project project) {
