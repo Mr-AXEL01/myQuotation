@@ -3,16 +3,20 @@ package net.axel.presentations;
 
 import net.axel.models.dto.ProjectDto;
 import net.axel.models.entities.Client;
+import net.axel.models.entities.Project;
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
 import net.axel.services.interfaces.IProjectService;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
 public class ProjectUi {
+    private final List<Material> materials ;
+    private final List<Labors> labors ;
     private final IProjectService projectService;
     private final ClientUi clientUi;
     private final Scanner scanner;
@@ -37,7 +41,7 @@ public class ProjectUi {
             choice = Integer.parseInt(scanner.nextLine());
 
             switch (choice) {
-                case 1 -> createNewProject();
+                case 1 -> addProject();
                 case 2 -> displayExistingProjects();
                 case 3 -> calculateProjectCost();
                 case 4 -> System.out.println("Exiting...");
@@ -46,7 +50,7 @@ public class ProjectUi {
         } while (choice != 4);
     }
 
-    private void createNewProject() {
+    private void addProject() {
         int customerChoice = -1;
         System.out.println("\n=== Client Search ===");
         System.out.println("Would you like to search for an existing client or add a new one?");
@@ -66,10 +70,10 @@ public class ProjectUi {
             }
 
             if (selectedClient != null) {
-                System.out.print("Would you like to continue with this client? (yes/no): ");
+                System.out.print("Would you like to continue with this client? (y/n): ");
                 String confirm = scanner.nextLine();
 
-                if (confirm.equalsIgnoreCase("yes")) {
+                if (confirm.equalsIgnoreCase("y")) {
                     startProjectCreation(selectedClient);
                 } else {
                     System.out.println("Returning to menu.");
@@ -105,14 +109,59 @@ public class ProjectUi {
         System.out.print("Enter the area of the kitchen (in m2): ");
         Double projectArea = Double.parseDouble(scanner.nextLine());
 
-        ProjectDto dto = new ProjectDto(
-                projectName,
-                projectArea,
-                clientId
-        );
 
-        projectService.addProject(dto);
-        System.out.println("Project created successfully for : " + selectedClient.getName());
+//        ProjectDto dto = new ProjectDto(
+//                projectName,
+//                projectArea,
+//                clientId
+//        );
+//
+//        Project project = projectService.addProject(dto);
+//        System.out.println("Project created successfully for : " + selectedClient.getName());
+//        if (project != null) {
+//            addComponent(project);
+//        }
+    }
+
+    private void addComponent(Project project) {
+        addMaterials();
+        addLabors();
+    }
+
+    private void addMaterials() {
+        Boolean addMore = true;
+        
+        while(addMore) {
+            System.out.println("\n--- Add Material ---");
+
+            System.out.print("Enter the name of the material: ");
+            String materialName = scanner.nextLine();
+
+            System.out.print("Enter the unit cost: ");
+            Double materialUnitCost = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Enter the quantity: ");
+            Double materialQuantity = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Enter the transport cost: ");
+            Double transportCost = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Enter the efficiency factor: (1.0 = standard < high quality)");
+            Double materialEfficiencyFactor = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Would you like to add new material? (y/n): ");
+            String confirm = scanner.nextLine();
+
+            if(confirm.equalsIgnoreCase("y")) {
+
+            } else {
+                addMore = false;
+            }
+        }
+    }
+
+    private void addLabors() {
+
     }
 
     private void displayExistingProjects() {
