@@ -2,8 +2,8 @@ package net.axel.presentations;
 
 
 import net.axel.models.dto.ProjectDto;
-import net.axel.models.entities.Client;
-import net.axel.models.entities.Project;
+import net.axel.models.entities.*;
+import net.axel.models.enums.ComponentType;
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
@@ -15,8 +15,8 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class ProjectUi {
-    private final List<Material> materials ;
-    private final List<Labors> labors ;
+    private List<Component> materials ;
+    private List<Component> labors ;
     private final IProjectService projectService;
     private final ClientUi clientUi;
     private final Scanner scanner;
@@ -129,9 +129,7 @@ public class ProjectUi {
     }
 
     private void addMaterials() {
-        Boolean addMore = true;
-        
-        while(addMore) {
+
             System.out.println("\n--- Add Material ---");
 
             System.out.print("Enter the name of the material: ");
@@ -149,15 +147,15 @@ public class ProjectUi {
             System.out.print("Enter the efficiency factor: (1.0 = standard < high quality)");
             Double materialEfficiencyFactor = Double.parseDouble(scanner.nextLine());
 
+            ComponentType componentType = ComponentType.MATERIAL;
+
+
             System.out.print("Would you like to add new material? (y/n): ");
             String confirm = scanner.nextLine();
 
             if(confirm.equalsIgnoreCase("y")) {
-
-            } else {
-                addMore = false;
+                addMaterials();
             }
-        }
     }
 
     private void addLabors() {
