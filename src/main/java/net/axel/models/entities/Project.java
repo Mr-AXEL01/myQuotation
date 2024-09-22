@@ -29,6 +29,14 @@ public class Project {
         this.client = client;
     }
 
+    public Project(UUID id, String name, Double surface, ProjectStatus projectStatus, Client clientId) {
+        this.id = id;
+        this.name = name;
+        this.surface = surface;
+        this.projectStatus = projectStatus;
+        this.client = clientId;
+    }
+
     public UUID getId() {
         return id;
     }
