@@ -58,7 +58,7 @@ public class ClientUi {
         } while (choice != 0);
     }
 
-    private void addClient() {
+    public Client addClient() {
         String name = clientHelper.promptForName();
         String address = clientHelper.promptForAddress();
         String phone = clientHelper.promptForPhone();
@@ -70,9 +70,11 @@ public class ClientUi {
         System.out.println("\nClient added successfully , Here are the details:");
         clientHelper.tableHeader();
         clientHelper.tableBody(addedClient);
+
+        return addedClient;
     }
 
-    private void findClientByName() {
+    public Client findClientByName() {
         String name = clientHelper.promptForName();
 
         Optional<Client> client = clientService.findClientByName(name);
@@ -83,6 +85,7 @@ public class ClientUi {
         } else {
             System.out.println("Client not found.");
         }
+        return client.get();
     }
 
     private void findAllClients() {

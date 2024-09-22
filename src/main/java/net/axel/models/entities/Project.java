@@ -13,6 +13,8 @@ public class Project {
     private Double totalCost;
     private ProjectStatus projectStatus;
     private Client client;
+//    private List<Quote> quotes;
+//    private List<Component> components;
 
     public Project() {
     }
@@ -25,6 +27,14 @@ public class Project {
         this.totalCost = totalCost;
         this.projectStatus = projectStatus;
         this.client = client;
+    }
+
+    public Project(UUID id, String name, Double surface, ProjectStatus projectStatus, Client clientId) {
+        this.id = id;
+        this.name = name;
+        this.surface = surface;
+        this.projectStatus = projectStatus;
+        this.client = clientId;
     }
 
     public UUID getId() {
@@ -82,4 +92,5 @@ public class Project {
     public void setClient(Client client) {
         this.client = client;
     }
+
 }
