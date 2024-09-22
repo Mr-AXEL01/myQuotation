@@ -19,13 +19,13 @@ CREATE TABLE IF NOT EXISTS projects (
     id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     surface DOUBLE PRECISION NOT NULL,
-    profit_margin DOUBLE PRECISION NOT NULL,
-    total_cost DOUBLE PRECISION NOT NULL,
+    profit_margin DOUBLE PRECISION ,
+    total_cost DOUBLE PRECISION ,
     project_status ProjectStatus NOT NULL,
     client_id UUID NOT NULL,
     deleted_at TIMESTAMP,
 
-    PRIMARY KEY (id),-- Specific to material components
+    PRIMARY KEY (id),
     FOREIGN KEY (client_id) REFERENCES clients(id)
 );
 
