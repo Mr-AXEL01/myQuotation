@@ -1,9 +1,11 @@
 package net.axel.presentations;
 
 
+import net.axel.models.dto.LaborDto;
 import net.axel.models.dto.MaterialDto;
 import net.axel.models.entities.*;
 import net.axel.models.enums.ComponentType;
+import net.axel.models.enums.ProjectStatus;
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
@@ -16,7 +18,7 @@ import java.util.UUID;
 
 public class ProjectUi {
     private List<MaterialDto> materials ;
-    private List<Component> labors ;
+    private List<LaborDto> labors ;
     private final IProjectService projectService;
     private final ClientUi clientUi;
     private final Scanner scanner;
@@ -109,54 +111,6 @@ public class ProjectUi {
         System.out.print("Enter the area of the kitchen (in m2): ");
         Double projectArea = Double.parseDouble(scanner.nextLine());
 
-        addMaterials(clientId);
-
-
-    }
-
-    private void addMaterials(UUID clientId) {
-
-            System.out.println("\n=== Add Material ===");
-
-            System.out.print("Enter the name of the material: ");
-            String materialName = scanner.nextLine();
-
-            System.out.print("Enter the unit cost: ");
-            Double materialCost = Double.parseDouble(scanner.nextLine());
-
-            System.out.print("Enter the quantity: ");
-            Double materialQuantity = Double.parseDouble(scanner.nextLine());
-
-            System.out.print("Enter the transport cost: ");
-            Double transportCost = Double.parseDouble(scanner.nextLine());
-
-            System.out.print("Enter the efficiency factor: (1.0 = standard < high quality)");
-            Double materialEfficiencyFactor = Double.parseDouble(scanner.nextLine());
-
-            ComponentType componentType = ComponentType.MATERIAL;
-
-        MaterialDto dto = new MaterialDto(
-                materialName,
-                materialCost,
-                materialQuantity,
-                componentType,
-                materialEfficiencyFactor,
-                clientId,
-                transportCost
-        );
-
-        materials.add(dto);
-
-            System.out.print("Would you like to add new material? (y/n): ");
-            String confirm = scanner.nextLine();
-
-            if(confirm.equalsIgnoreCase("y")) {
-                addMaterials(clientId);
-            }
-    }
-
-    private void addLabors() {
-        
     }
 
     private void displayExistingProjects() {
