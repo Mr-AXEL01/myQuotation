@@ -7,10 +7,7 @@ import net.axel.models.dto.ProjectDto;
 import net.axel.models.entities.Client;
 import net.axel.models.enums.ComponentType;
 import net.axel.models.enums.ProjectStatus;
-<<<<<<< HEAD
-=======
 
->>>>>>> eb29da18ae6c85e4ab08f12027344f140230a4a6
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
