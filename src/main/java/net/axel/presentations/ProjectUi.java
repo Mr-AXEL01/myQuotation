@@ -7,16 +7,20 @@ import net.axel.models.dto.ProjectDto;
 import net.axel.models.entities.Client;
 import net.axel.models.enums.ComponentType;
 import net.axel.models.enums.ProjectStatus;
+
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
 import net.axel.services.interfaces.IProjectService;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
 public class ProjectUi {
+    private List<MaterialDto> materials ;
+    private List<Component> labors ;
     private final IProjectService projectService;
     private final ClientUi clientUi;
     private final Scanner scanner;
@@ -41,7 +45,7 @@ public class ProjectUi {
             choice = Integer.parseInt(scanner.nextLine());
 
             switch (choice) {
-                case 1 -> createNewProject();
+                case 1 -> addProject();
                 case 2 -> displayExistingProjects();
                 case 3 -> calculateProjectCost();
                 case 4 -> System.out.println("Exiting...");
@@ -50,7 +54,7 @@ public class ProjectUi {
         } while (choice != 4);
     }
 
-    private void createNewProject() {
+    private void addProject() {
         int customerChoice = -1;
         System.out.println("\n=== Client Search ===");
         System.out.println("Would you like to search for an existing client or add a new one?");
@@ -70,10 +74,10 @@ public class ProjectUi {
             }
 
             if (selectedClient != null) {
-                System.out.print("Would you like to continue with this client? (yes/no): ");
+                System.out.print("Would you like to continue with this client? (y/n): ");
                 String confirm = scanner.nextLine();
 
-                if (confirm.equalsIgnoreCase("yes")) {
+                if (confirm.equalsIgnoreCase("y")) {
                     startProjectCreation(selectedClient);
                 } else {
                     System.out.println("Returning to menu.");
@@ -139,6 +143,10 @@ public class ProjectUi {
         } else {
             profitMargin = 0.0;
         }
+
+        addMaterials(clientId);
+
+
     }
 
     private void addMaterials(UUID clientId) {
@@ -182,6 +190,10 @@ public class ProjectUi {
         if (confirm.equalsIgnoreCase("y")) {
             addMaterials(clientId);
         }
+    }
+
+    private void addLabors() {
+        
     }
 
     
