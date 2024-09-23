@@ -1,8 +1,12 @@
 package net.axel.presentations;
 
 
+import net.axel.models.dto.LaborDto;
+import net.axel.models.dto.MaterialDto;
 import net.axel.models.dto.ProjectDto;
 import net.axel.models.entities.Client;
+import net.axel.models.enums.ComponentType;
+import net.axel.models.enums.ProjectStatus;
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
@@ -105,15 +109,60 @@ public class ProjectUi {
         System.out.print("Enter the area of the kitchen (in m2): ");
         Double projectArea = Double.parseDouble(scanner.nextLine());
 
-        ProjectDto dto = new ProjectDto(
-                projectName,
-                projectArea,
-                clientId
+        Double vat;
+        Double profitMargin;
+        ProjectStatus projectStatus = ProjectStatus.IN_PROGRESS;
+
+
+        addMaterials(clientId);
+
+        
+    }
+
+    private void addMaterials(UUID clientId) {
+
+        System.out.println("\n=== Add Material ===");
+
+        System.out.print("Enter the name of the material: ");
+        String materialName = scanner.nextLine();
+
+        System.out.print("Enter the unit cost: ");
+        Double materialCost = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the quantity: ");
+        Double materialQuantity = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the transport cost: ");
+        Double transportCost = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the efficiency factor: (1.0 = standard < high quality)");
+        Double materialEfficiencyFactor = Double.parseDouble(scanner.nextLine());
+
+        ComponentType componentType = ComponentType.MATERIAL;
+
+        MaterialDto dto = new MaterialDto(
+                materialName,
+                materialCost,
+                materialQuantity,
+                componentType,
+                materialEfficiencyFactor,
+                clientId,
+                transportCost
         );
 
-        projectService.addProject(dto);
-        System.out.println("Project created successfully for : " + selectedClient.getName());
+        materials.add(dto);
+
+        System.out.println("material added successfully!");
+
+        System.out.print("Would you like to add new material? (y/n): ");
+        String confirm = scanner.nextLine();
+
+        if (confirm.equalsIgnoreCase("y")) {
+            addMaterials(clientId);
+        }
     }
+
+
 
     private void displayExistingProjects() {
 //         to do
