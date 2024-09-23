@@ -116,7 +116,29 @@ public class ProjectUi {
 
         addMaterials(clientId);
 
-        
+        addLabors(clientId);
+
+        System.out.println("\n=== Calcul du coût total ===\n");
+
+        System.out.println("Would you like to apply a VAT to the project? (y/n)");
+        String vatConfirmation = scanner.nextLine();
+
+        if(vatConfirmation.equalsIgnoreCase("y")){
+            System.out.println("Enter the VAT percentage (in decimal form, e.g., 0.2 for 20%) :");
+            vat = Double.valueOf(scanner.nextLine());
+        } else {
+            vat = 0.0;
+        }
+
+        System.out.println("Would you like to apply a profit margin to the project? (y/n)");
+        String marginConfirm = scanner.nextLine();
+
+        if(marginConfirm.equalsIgnoreCase("y")) {
+            System.out.println("Would you like to apply a profit margin to the project? (y/n)");
+            profitMargin = Double.valueOf(scanner.nextLine());
+        } else {
+            profitMargin = 0.0;
+        }
     }
 
     private void addMaterials(UUID clientId) {
@@ -162,7 +184,7 @@ public class ProjectUi {
         }
     }
 
-
+    
 
     private void displayExistingProjects() {
 //         to do
