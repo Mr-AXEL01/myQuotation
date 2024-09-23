@@ -7,6 +7,8 @@ import java.util.UUID;
 public record ProjectDto(
         String name,
         Double surface,
+        Double profitMargin,
+        ProjectStatus projectStatus,
         UUID clientId
 ) {
 }
