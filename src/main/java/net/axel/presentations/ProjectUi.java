@@ -7,7 +7,10 @@ import net.axel.models.dto.ProjectDto;
 import net.axel.models.entities.Client;
 import net.axel.models.enums.ComponentType;
 import net.axel.models.enums.ProjectStatus;
+<<<<<<< HEAD
+=======
 
+>>>>>>> eb29da18ae6c85e4ab08f12027344f140230a4a6
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
@@ -20,7 +23,7 @@ import java.util.UUID;
 
 public class ProjectUi {
     private List<MaterialDto> materials ;
-    private List<Component> labors ;
+    private List<LaborDto> labors ;
     private final IProjectService projectService;
     private final ClientUi clientUi;
     private final Scanner scanner;
@@ -143,10 +146,6 @@ public class ProjectUi {
         } else {
             profitMargin = 0.0;
         }
-
-        addMaterials(clientId);
-
-
     }
 
     private void addMaterials(UUID clientId) {
@@ -192,11 +191,43 @@ public class ProjectUi {
         }
     }
 
-    private void addLabors() {
-        
-    }
+    private void addLabors(UUID clientId) {
+        System.out.println("\n=== Add Labor ===");
 
-    
+        System.out.print("Enter the name of the labor: ");
+        String laborName = scanner.nextLine();
+
+        System.out.print("Enter the hourly rate: ");
+        Double hourlyRate = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the hours worked: ");
+        Double hoursWorked = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the efficiency factor: ");
+        Double laborEfficiencyFactor = Double.parseDouble(scanner.nextLine());
+
+        ComponentType componentType = ComponentType.LABOR;
+
+        LaborDto dto = new LaborDto(
+                laborName,
+                hourlyRate,
+                hoursWorked,
+                componentType,
+                laborEfficiencyFactor,
+                clientId
+        );
+
+        labors.add(dto);
+
+        System.out.println("labor added successfully!");
+
+        System.out.print("Would you like to add new labor? (y/n): ");
+        String confirm = scanner.nextLine();
+
+        if (confirm.equalsIgnoreCase("y")) {
+            addLabors(clientId);
+        }
+    }
 
     private void displayExistingProjects() {
 //         to do
