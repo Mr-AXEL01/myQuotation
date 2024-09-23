@@ -2,6 +2,7 @@ package net.axel.models.entities;
 
 import net.axel.models.enums.ProjectStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Project {
@@ -14,7 +15,7 @@ public class Project {
     private ProjectStatus projectStatus;
     private Client client;
 //    private List<Quote> quotes;
-//    private List<Component> components;
+    private List<Component> components;
 
     public Project() {
     }
@@ -27,6 +28,17 @@ public class Project {
         this.totalCost = totalCost;
         this.projectStatus = projectStatus;
         this.client = client;
+    }
+
+    public Project(UUID id, String name, Double surface, Double profitMargin, Double totalCost, ProjectStatus projectStatus, Client client, List<Component> components) {
+        this.id = id;
+        this.name = name;
+        this.surface = surface;
+        this.profitMargin = profitMargin;
+        this.totalCost = totalCost;
+        this.projectStatus = projectStatus;
+        this.client = client;
+        this.components = components;
     }
 
     public Project(UUID id, String name, Double surface, ProjectStatus projectStatus, Client clientId) {
@@ -93,4 +105,11 @@ public class Project {
         this.client = client;
     }
 
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<Component> components) {
+        this.components = components;
+    }
 }
