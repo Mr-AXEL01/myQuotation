@@ -9,7 +9,6 @@ public record LaborDto(
         Double laborCost,
         Double duration,
         ComponentType laborType,
-        Double laborEfficiencyFactor,
-        UUID clientId
+        Double laborEfficiencyFactor
 ) {
 }

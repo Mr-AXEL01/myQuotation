@@ -10,7 +10,6 @@ public record MaterialDto(
         Double quantity,
         ComponentType materialType,
         Double materialEfficiencyFactory,
-        UUID clientId,
-        Double transportType
+        Double transportCost
 ) {
 }
