@@ -14,13 +14,14 @@ import net.axel.services.implementations.ProjectService;
 import net.axel.services.interfaces.IProjectService;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
 public class ProjectUi {
-    private List<MaterialDto> materials ;
-    private List<LaborDto> labors ;
+    private final List<MaterialDto> materials ;
+    private final List<LaborDto> labors ;
     private final IProjectService projectService;
     private final ClientUi clientUi;
     private final Scanner scanner;
@@ -29,6 +30,8 @@ public class ProjectUi {
     public ProjectUi(ProjectService projectService) throws SQLException {
         this.projectService = projectService;
         this.clientUi = new ClientUi(new ClientService(new ClientRepository()));
+        this.materials = new ArrayList<>();
+        this.labors = new ArrayList<>();
         this.scanner = new Scanner(System.in);
     }
 
@@ -40,7 +43,7 @@ public class ProjectUi {
             System.out.println("2. View existing projects");
             System.out.println("3. Calculate the cost of a project");
             System.out.println("4. Exit");
-            System.out.print("Enter your choice : ");
+            System.out.print("Enter your choice: ");
 
             choice = Integer.parseInt(scanner.nextLine());
 
@@ -60,7 +63,7 @@ public class ProjectUi {
         System.out.println("Would you like to search for an existing client or add a new one?");
         System.out.println("1. Search for an existing client");
         System.out.println("2. Add a new client");
-        System.out.println("3. Cancel");
+        System.out.println("0. Cancel");
         System.out.print("Enter your choice: ");
 
         try {
@@ -69,19 +72,12 @@ public class ProjectUi {
             switch (customerChoice) {
                 case 1 -> searchForExistingClient();
                 case 2 -> addNewClient();
-                case 3 -> System.out.println("Cancelled...");
+                case 0 -> System.out.println("Cancelled...");
                 default -> System.out.println("Invalid choice. Returning to main menu.");
             }
 
             if (selectedClient != null) {
-                System.out.print("Would you like to continue with this client? (y/n): ");
-                String confirm = scanner.nextLine();
-
-                if (confirm.equalsIgnoreCase("y")) {
-                    startProjectCreation(selectedClient);
-                } else {
-                    System.out.println("Returning to menu.");
-                }
+                confirmAndProceedWithClient();
             }
 
         } catch (NumberFormatException e) {
@@ -103,50 +99,117 @@ public class ProjectUi {
         }
     }
 
-    private void startProjectCreation(Client selectedClient) {
-        final UUID clientId = selectedClient.getId();
+    private void confirmAndProceedWithClient() {
+        System.out.print("Would you like to continue with this client? (y/n): ");
+        String confirm = scanner.nextLine();
 
-        System.out.println("\n--- Creation of a New Project ---");
+        if (confirm.equalsIgnoreCase("y")) {
+            initializeProjectDetails(selectedClient);
+        } else {
+            System.out.println("Returning to menu.");
+        }
+    }
+
+    private void initializeProjectDetails(Client selectedClient) {
+        System.out.println("\n=== Creation of a New Project ===");
         System.out.print("Enter the name of the project: ");
         String projectName = scanner.nextLine();
 
         System.out.print("Enter the area of the kitchen (in m2): ");
-        Double projectArea = Double.parseDouble(scanner.nextLine());
+        double surface = Double.parseDouble(scanner.nextLine());
 
-        Double vat;
-        Double profitMargin;
-        ProjectStatus projectStatus = ProjectStatus.IN_PROGRESS;
+        addMaterials();
+        addLabors();
 
+        double vat = requestVat();
+        double profitMargin = requestProfitMargin();
 
-        addMaterials(clientId);
+        displayProjectCostSummary(selectedClient, projectName, surface, vat, profitMargin);
+    }
 
-        addLabors(clientId);
-
-        System.out.println("\n=== Calcul du coût total ===\n");
-
+    private double requestVat() {
         System.out.println("Would you like to apply a VAT to the project? (y/n)");
         String vatConfirmation = scanner.nextLine();
 
-        if(vatConfirmation.equalsIgnoreCase("y")){
-            System.out.println("Enter the VAT percentage (in decimal form, e.g., 0.2 for 20%) :");
-            vat = Double.valueOf(scanner.nextLine());
-        } else {
-            vat = 0.0;
+        if (vatConfirmation.equalsIgnoreCase("y")) {
+            System.out.println("Enter the VAT percentage (in decimal form, e.g., 0.2 for 20%):");
+            return Double.parseDouble(scanner.nextLine());
         }
+        return 0.0;
+    }
 
+    private double requestProfitMargin() {
         System.out.println("Would you like to apply a profit margin to the project? (y/n)");
         String marginConfirm = scanner.nextLine();
 
-        if(marginConfirm.equalsIgnoreCase("y")) {
-            System.out.println("Would you like to apply a profit margin to the project? (y/n)");
-            profitMargin = Double.valueOf(scanner.nextLine());
-        } else {
-            profitMargin = 0.0;
+        if (marginConfirm.equalsIgnoreCase("y")) {
+            System.out.println("Enter the profit margin percentage (in decimal form, e.g., 0.15 for 15%):");
+            return Double.parseDouble(scanner.nextLine());
         }
+        return 0.0;
     }
 
-    private void addMaterials(UUID clientId) {
 
+    private void displayProjectCostSummary(Client selectedClient, String projectName, double surface, double vat, double profitMargin) {
+        System.out.println("\n=== Project Cost Summary ===\n");
+        System.out.println("Project Name    : " + projectName);
+        System.out.println("Client Name     : " + selectedClient.getName());
+        System.out.println("Client Address  : " + selectedClient.getAddress());
+        System.out.println("Surface Area    : " + surface + " m²");
+
+        double totalMaterialCost = calculateTotalMaterialCost(vat);
+        double totalLaborCost = calculateTotalLaborCost(vat);
+
+        double totalCost = totalMaterialCost + totalLaborCost;
+        double finalTotalCost = calculateFinalCostWithMargin(totalCost, profitMargin);
+
+        System.out.println("\n** Final Total Cost of the Project: " + finalTotalCost + " $ **");
+    }
+
+    private double calculateTotalMaterialCost(double vat) {
+        System.out.println("\n=== Material Costs ===");
+
+        double totalMaterialCost = materials.stream()
+                .mapToDouble(material -> (material.materialCost() * material.quantity() * material.materialEfficiencyFactory()) + material.transportCost())
+                .sum();
+
+        System.out.println("**Total Material Cost before VAT: " + totalMaterialCost + " $");
+
+        if (vat > 0) {
+            double totalMaterialWithVat = totalMaterialCost + (totalMaterialCost * vat);
+            System.out.println("**Total Material Cost with VAT (" + (vat * 100) + "%): " + totalMaterialWithVat + " $");
+            return totalMaterialWithVat;
+        }
+        return totalMaterialCost;
+    }
+
+    private double calculateTotalLaborCost(double vat) {
+        System.out.println("\n=== Labor Costs ===");
+
+        double totalLaborCost = labors.stream()
+                .mapToDouble(labor -> labor.laborCost() * labor.duration() * labor.laborEfficiencyFactor())
+                .sum();
+
+        System.out.println("Total Labor Cost before VAT: " + totalLaborCost + " $");
+
+        if (vat > 0) {
+            double totalLaborWithVat = totalLaborCost + (totalLaborCost * vat);
+            System.out.println("Total Labor Cost with VAT (" + (vat * 100) + "%): " + totalLaborWithVat + " $");
+            return totalLaborWithVat;
+        }
+        return totalLaborCost;
+    }
+
+    private double calculateFinalCostWithMargin(double totalCost, double profitMargin) {
+        if (profitMargin > 0) {
+            double profitCost = totalCost * profitMargin;
+            System.out.println("Profit Margin (" + (profitMargin * 100) + "%): " + profitCost + " $");
+            return totalCost + profitCost;
+        }
+        return totalCost;
+    }
+
+    private void addMaterials() {
         System.out.println("\n=== Add Material ===");
 
         System.out.print("Enter the name of the material: ");
@@ -161,77 +224,58 @@ public class ProjectUi {
         System.out.print("Enter the transport cost: ");
         Double transportCost = Double.parseDouble(scanner.nextLine());
 
-        System.out.print("Enter the efficiency factor: (1.0 = standard < high quality)");
+        System.out.print("Enter the efficiency factor (1.0 = standard, < 1.0 for high quality): ");
         Double materialEfficiencyFactor = Double.parseDouble(scanner.nextLine());
 
-        ComponentType componentType = ComponentType.MATERIAL;
-
         MaterialDto dto = new MaterialDto(
-                materialName,
-                materialCost,
-                materialQuantity,
-                componentType,
-                materialEfficiencyFactor,
-                clientId,
-                transportCost
+                materialName, materialCost, materialQuantity, ComponentType.MATERIAL, materialEfficiencyFactor, transportCost
         );
 
         materials.add(dto);
+        System.out.println("Material added successfully!");
 
-        System.out.println("material added successfully!");
-
-        System.out.print("Would you like to add new material? (y/n): ");
-        String confirm = scanner.nextLine();
-
-        if (confirm.equalsIgnoreCase("y")) {
-            addMaterials(clientId);
+        System.out.print("Would you like to add another material? (y/n): ");
+        if (scanner.nextLine().equalsIgnoreCase("y")) {
+            addMaterials();
         }
     }
 
-    private void addLabors(UUID clientId) {
+    private void addLabors() {
         System.out.println("\n=== Add Labor ===");
 
         System.out.print("Enter the name of the labor: ");
         String laborName = scanner.nextLine();
 
         System.out.print("Enter the hourly rate: ");
-        Double hourlyRate = Double.parseDouble(scanner.nextLine());
+        Double laborCost = Double.parseDouble(scanner.nextLine());
 
-        System.out.print("Enter the hours worked: ");
-        Double hoursWorked = Double.parseDouble(scanner.nextLine());
+        System.out.print("Enter the number of hours: ");
+        Double laborDuration = Double.parseDouble(scanner.nextLine());
 
-        System.out.print("Enter the efficiency factor: ");
+        System.out.print("Enter the efficiency factor (1.0 = standard, < 1.0 for highly skilled): ");
         Double laborEfficiencyFactor = Double.parseDouble(scanner.nextLine());
 
-        ComponentType componentType = ComponentType.LABOR;
-
         LaborDto dto = new LaborDto(
-                laborName,
-                hourlyRate,
-                hoursWorked,
-                componentType,
-                laborEfficiencyFactor,
-                clientId
+                laborName, laborCost, laborDuration, ComponentType.LABOR, laborEfficiencyFactor
         );
 
         labors.add(dto);
+        System.out.println("Labor added successfully!");
 
-        System.out.println("labor added successfully!");
-
-        System.out.print("Would you like to add new labor? (y/n): ");
-        String confirm = scanner.nextLine();
-
-        if (confirm.equalsIgnoreCase("y")) {
-            addLabors(clientId);
+        System.out.print("Would you like to add another labor? (y/n): ");
+        if (scanner.nextLine().equalsIgnoreCase("y")) {
+            addLabors();
         }
     }
 
     private void displayExistingProjects() {
-//         to do
+        System.out.println("Displaying existing projects...");
+        // To be implemented
     }
 
     private void calculateProjectCost() {
-//         to do
+        System.out.println("Calculating project cost...");
+        // To be implemented
     }
 
 
