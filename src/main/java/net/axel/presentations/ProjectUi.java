@@ -3,9 +3,14 @@ package net.axel.presentations;
 
 import net.axel.models.dto.LaborDto;
 import net.axel.models.dto.MaterialDto;
-import net.axel.models.entities.*;
+import net.axel.models.dto.ProjectDto;
+import net.axel.models.entities.Client;
 import net.axel.models.enums.ComponentType;
 import net.axel.models.enums.ProjectStatus;
+<<<<<<< HEAD
+=======
+
+>>>>>>> eb29da18ae6c85e4ab08f12027344f140230a4a6
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
@@ -111,6 +116,117 @@ public class ProjectUi {
         System.out.print("Enter the area of the kitchen (in m2): ");
         Double projectArea = Double.parseDouble(scanner.nextLine());
 
+        Double vat;
+        Double profitMargin;
+        ProjectStatus projectStatus = ProjectStatus.IN_PROGRESS;
+
+
+        addMaterials(clientId);
+
+        addLabors(clientId);
+
+        System.out.println("\n=== Calcul du coût total ===\n");
+
+        System.out.println("Would you like to apply a VAT to the project? (y/n)");
+        String vatConfirmation = scanner.nextLine();
+
+        if(vatConfirmation.equalsIgnoreCase("y")){
+            System.out.println("Enter the VAT percentage (in decimal form, e.g., 0.2 for 20%) :");
+            vat = Double.valueOf(scanner.nextLine());
+        } else {
+            vat = 0.0;
+        }
+
+        System.out.println("Would you like to apply a profit margin to the project? (y/n)");
+        String marginConfirm = scanner.nextLine();
+
+        if(marginConfirm.equalsIgnoreCase("y")) {
+            System.out.println("Would you like to apply a profit margin to the project? (y/n)");
+            profitMargin = Double.valueOf(scanner.nextLine());
+        } else {
+            profitMargin = 0.0;
+        }
+    }
+
+    private void addMaterials(UUID clientId) {
+
+        System.out.println("\n=== Add Material ===");
+
+        System.out.print("Enter the name of the material: ");
+        String materialName = scanner.nextLine();
+
+        System.out.print("Enter the unit cost: ");
+        Double materialCost = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the quantity: ");
+        Double materialQuantity = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the transport cost: ");
+        Double transportCost = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the efficiency factor: (1.0 = standard < high quality)");
+        Double materialEfficiencyFactor = Double.parseDouble(scanner.nextLine());
+
+        ComponentType componentType = ComponentType.MATERIAL;
+
+        MaterialDto dto = new MaterialDto(
+                materialName,
+                materialCost,
+                materialQuantity,
+                componentType,
+                materialEfficiencyFactor,
+                clientId,
+                transportCost
+        );
+
+        materials.add(dto);
+
+        System.out.println("material added successfully!");
+
+        System.out.print("Would you like to add new material? (y/n): ");
+        String confirm = scanner.nextLine();
+
+        if (confirm.equalsIgnoreCase("y")) {
+            addMaterials(clientId);
+        }
+    }
+
+    private void addLabors(UUID clientId) {
+        System.out.println("\n=== Add Labor ===");
+
+        System.out.print("Enter the name of the labor: ");
+        String laborName = scanner.nextLine();
+
+        System.out.print("Enter the hourly rate: ");
+        Double hourlyRate = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the hours worked: ");
+        Double hoursWorked = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter the efficiency factor: ");
+        Double laborEfficiencyFactor = Double.parseDouble(scanner.nextLine());
+
+        ComponentType componentType = ComponentType.LABOR;
+
+        LaborDto dto = new LaborDto(
+                laborName,
+                hourlyRate,
+                hoursWorked,
+                componentType,
+                laborEfficiencyFactor,
+                clientId
+        );
+
+        labors.add(dto);
+
+        System.out.println("labor added successfully!");
+
+        System.out.print("Would you like to add new labor? (y/n): ");
+        String confirm = scanner.nextLine();
+
+        if (confirm.equalsIgnoreCase("y")) {
+            addLabors(clientId);
+        }
     }
 
     private void displayExistingProjects() {
