@@ -78,13 +78,13 @@ public class ClientUi {
         String name = clientHelper.promptForName();
 
         Optional<Client> client = clientService.findClientByName(name);
-        if (client.isPresent()) {
-            System.out.println("\nHere are the details:");
-            clientHelper.tableHeader();
-            clientHelper.tableBody(client.get());
-        } else {
-            System.out.println("Client not found.");
+        if (client.isEmpty()) {
+            System.out.println("client not found!");
+            return null;
         }
+        System.out.println("\nHere are the details:");
+        clientHelper.tableHeader();
+        clientHelper.tableBody(client.get());
         return client.get();
     }
 
