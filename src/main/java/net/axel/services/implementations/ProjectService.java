@@ -27,7 +27,7 @@ public class ProjectService implements IProjectService {
                 dto.name(),
                 dto.surface(),
                 dto.profitMargin(),
-                dto.totalCost(),
+                dto.finalTotalCost(),
                 dto.projectStatus(),
                 client
         );
