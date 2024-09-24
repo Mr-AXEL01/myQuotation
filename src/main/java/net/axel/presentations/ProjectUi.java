@@ -5,30 +5,37 @@ import net.axel.models.dto.LaborDto;
 import net.axel.models.dto.MaterialDto;
 import net.axel.models.dto.ProjectDto;
 import net.axel.models.entities.Client;
+import net.axel.models.entities.Labor;
+import net.axel.models.entities.Material;
+import net.axel.models.entities.Project;
 import net.axel.models.enums.ComponentType;
-import net.axel.models.enums.ProjectStatus;
 
+import net.axel.models.enums.ProjectStatus;
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
 import net.axel.services.implementations.ProjectService;
+import net.axel.services.interfaces.IComponentService;
 import net.axel.services.interfaces.IProjectService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
 
 public class ProjectUi {
     private final List<MaterialDto> materials ;
     private final List<LaborDto> labors ;
     private final IProjectService projectService;
+    private final IComponentService<Material, MaterialDto> materielService;
+    private final IComponentService<Labor, LaborDto> laborService;
     private final ClientUi clientUi;
     private final Scanner scanner;
     private Client selectedClient;
 
-    public ProjectUi(ProjectService projectService) throws SQLException {
+    public ProjectUi(ProjectService projectService, IComponentService<Material, MaterialDto> materielService, IComponentService<Labor, LaborDto> laborService) throws SQLException {
         this.projectService = projectService;
+        this.materielService = materielService;
+        this.laborService = laborService;
         this.clientUi = new ClientUi(new ClientService(new ClientRepository()));
         this.materials = new ArrayList<>();
         this.labors = new ArrayList<>();
@@ -124,7 +131,29 @@ public class ProjectUi {
         double vat = requestVat();
         double profitMargin = requestProfitMargin();
 
+        double totalMaterialCost = calculateTotalMaterialCost(vat);
+        double totalLaborCost = calculateTotalLaborCost(vat);
+        double totalCost = totalMaterialCost + totalLaborCost;
+
         displayProjectCostSummary(selectedClient, projectName, surface, vat, profitMargin);
+
+        ProjectDto dto = new ProjectDto(
+                projectName,
+                surface,
+                profitMargin,
+                totalCost,
+                ProjectStatus.IN_PROGRESS,
+                selectedClient.getId()
+        );
+
+        saveAll(vat, dto);
+    }
+
+    private void saveAll(Double vat, ProjectDto dto) {
+        Project project = projectService.addProject(dto);
+
+        materielService.save(materials, vat, project);
+        laborService.save(labors, vat, project);
     }
 
     private double requestVat() {
@@ -148,7 +177,6 @@ public class ProjectUi {
         }
         return 0.0;
     }
-
 
     private void displayProjectCostSummary(Client selectedClient, String projectName, double surface, double vat, double profitMargin) {
         System.out.println("\n=== Project Cost Summary ===\n");
@@ -177,7 +205,7 @@ public class ProjectUi {
 
         if (vat > 0) {
             double totalMaterialWithVat = totalMaterialCost + (totalMaterialCost * vat);
-            System.out.println("**Total Material Cost with VAT (" + (vat * 100) + "%): " + totalMaterialWithVat + " $");
+            System.out.println("**Total Material Cost with VAT (" + (int)(vat * 100) + "%): " + totalMaterialWithVat + " $");
             return totalMaterialWithVat;
         }
         return totalMaterialCost;
@@ -228,7 +256,12 @@ public class ProjectUi {
         Double materialEfficiencyFactor = Double.parseDouble(scanner.nextLine());
 
         MaterialDto dto = new MaterialDto(
-                materialName, materialCost, materialQuantity, ComponentType.MATERIAL, materialEfficiencyFactor, transportCost
+                materialName,
+                materialCost,
+                materialQuantity,
+                ComponentType.MATERIAL,
+                materialEfficiencyFactor,
+                transportCost
         );
 
         materials.add(dto);
@@ -256,7 +289,11 @@ public class ProjectUi {
         Double laborEfficiencyFactor = Double.parseDouble(scanner.nextLine());
 
         LaborDto dto = new LaborDto(
-                laborName, laborCost, laborDuration, ComponentType.LABOR, laborEfficiencyFactor
+                laborName,
+                laborCost,
+                laborDuration,
+                ComponentType.LABOR,
+                laborEfficiencyFactor
         );
 
         labors.add(dto);
