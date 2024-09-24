@@ -8,7 +8,7 @@ public record ProjectDto(
         String name,
         Double surface,
         Double profitMargin,
-        Double totalCost,
+        Double finalTotalCost,
         ProjectStatus projectStatus,
         UUID clientId
 ) {
