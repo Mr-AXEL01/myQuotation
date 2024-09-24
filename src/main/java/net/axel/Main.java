@@ -4,8 +4,12 @@ import net.axel.config.DatabaseConnection;
 import net.axel.presentations.ClientUi;
 import net.axel.presentations.ProjectUi;
 import net.axel.repositories.implementations.ClientRepository;
+import net.axel.repositories.implementations.LaborRepository;
+import net.axel.repositories.implementations.MaterialRepository;
 import net.axel.repositories.implementations.ProjectRepository;
 import net.axel.services.implementations.ClientService;
+import net.axel.services.implementations.LaborService;
+import net.axel.services.implementations.MaterialService;
 import net.axel.services.implementations.ProjectService;
 
 import java.sql.Connection;
@@ -30,7 +34,7 @@ public class Main {
 //        ClientUi clientUi = new ClientUi(new ClientService(new ClientRepository()));
 //        clientUi.showMenu();
 
-        ProjectUi projectUi = new ProjectUi(new ProjectService(new ProjectRepository(), new ClientService(new ClientRepository())));
+        ProjectUi projectUi = new ProjectUi(new ProjectService(new ProjectRepository(), new ClientService(new ClientRepository())), new MaterialService( new MaterialRepository()), new LaborService(new LaborRepository()));
         projectUi.showMenu();
     }
 
