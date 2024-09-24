@@ -37,4 +37,16 @@ public class LaborService implements IComponentService<Labor, LaborDto> {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Double calculateTotalCost(List<LaborDto> dto) {
+         return dto.stream()
+                 .mapToDouble(labor -> labor.laborCost() * labor.duration() * labor.laborEfficiencyFactor())
+                 .sum();
+    }
+
+    @Override
+    public Double addVat(Double totalLaborCost, Double vat) {
+        return totalLaborCost + totalLaborCost * vat;
+    }
 }
