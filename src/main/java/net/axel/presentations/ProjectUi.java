@@ -113,6 +113,14 @@ public class ProjectUi {
     private void displayExistingProjects() {
         System.out.println("\n=== Displaying existing projects===\n");
 
+        List<Project> projects = projectService.findAllProjects();
+        if(projects.isEmpty()){
+            System.out.println("No project found for the moments.");
+            return;
+        }
+        projectHelper.tableHeader();
+
+        projects.forEach(projectHelper::tableBody);
     }
 
     private void calculateProjectCost() {
