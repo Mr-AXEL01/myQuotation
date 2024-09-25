@@ -125,7 +125,7 @@ public class ProjectUi {
     }
 
     private void calculateProjectCost() {
-        System.out.println("\n=== Calculating project cost ===");
+        System.out.println("\n=== Calculating cost of an existing Project ===");
 
         UUID projectId = projectHelper.requestProjectId();
 
