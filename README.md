@@ -37,7 +37,7 @@ To install and run the MyQuotation application, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/myquotation.git
+   git clone https://github.com//Mr-AXEL01/myquotation.git
 
 ## Technologies Used
 - **Java**: The primary programming language used for application development, allowing for robust and efficient application logic.
