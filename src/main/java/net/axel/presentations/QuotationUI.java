@@ -12,6 +12,7 @@ import net.axel.services.implementations.LaborService;
 import net.axel.services.implementations.MaterialService;
 import net.axel.services.implementations.QuotationService;
 import net.axel.services.interfaces.IQuotationService;
+import net.axel.utils.Validation;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -42,7 +43,7 @@ public class QuotationUI {
         double totalLaborCost = componentUi.calculateTotalLaborCost(vat, laborDtos);
 
         double totalCost = totalMaterialCost + totalLaborCost;
-        System.out.println("3- Total cost before margin: "+ totalCost+ "$");
+        System.out.println("3- Total cost before margin: " + totalCost + "$");
         double finalTotalCost = calculateTotalCostWithMargin(totalCost, profitMargin);
 
         System.out.println("\n** Final Total Cost of the Project: " + finalTotalCost + "$ **");
@@ -53,7 +54,7 @@ public class QuotationUI {
     private double calculateTotalCostWithMargin(double totalCost, double profitMargin) {
         if (profitMargin > 0) {
             double profitCost = totalCost * profitMargin;
-            System.out.println("4- Profit Margin (" + (int)(profitMargin * 100) + "%): " + profitCost + "$");
+            System.out.println("4- Profit Margin (" + (int) (profitMargin * 100) + "%): " + profitCost + "$");
             totalCost += profitCost;
         }
         return totalCost;
@@ -63,12 +64,21 @@ public class QuotationUI {
         System.out.println("\n=== Registration of the Quote ===");
         Quotation quotation;
         do {
+            LocalDate issuedDate;
+            do {
+                System.out.println("Enter the date of issue of the quote (format: yyyy-mm-dd) : ");
+                issuedDate = LocalDate.parse(scanner.nextLine());
+                if (!Validation.isNotEmpty(String.valueOf(issuedDate)) || Validation.isValidDate(String.valueOf(issuedDate))) {
+                    System.out.println("please enter a valid date");
+                }
+            } while (!Validation.isValidDate(String.valueOf(issuedDate)));
 
-            System.out.println("Enter the date of issue of the quote (format: yyyy-mm-dd) : ");
-            LocalDate issuedDate = LocalDate.parse(scanner.nextLine());
-
-            System.out.println("Enter the validity date of the quote (format: yyyy-mm-dd) : ");
-            LocalDate validityDate = LocalDate.parse(scanner.nextLine());
+            LocalDate validityDate;
+            do {
+                System.out.println("Enter the validity date of the quote (format: yyyy-mm-dd) : ");
+                validityDate = LocalDate.parse(scanner.nextLine());
+                if (!Validation.isNotEmpty(String.valueOf(validityDate)) || Validation.isValidDate(String.valueOf(validityDate)));
+            } while (!Validation.isValidDate(String.valueOf(validityDate)));
 
             Boolean accepted = confirmQuotationStatus();
 
@@ -80,6 +90,9 @@ public class QuotationUI {
                     project.getId()
             );
             quotation = quotationService.addQuotation(dto);
+            if (quotation == null) {
+                System.out.println("validity date must be after issuedDate.\n");
+            }
         } while (quotation == null);
 
         System.out.println("\n \t\t\t\t** End of project **\n");
