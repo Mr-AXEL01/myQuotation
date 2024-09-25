@@ -4,7 +4,7 @@ import net.axel.models.enums.ComponentType;
 
 import java.util.UUID;
 
-public class Component {
+public abstract class Component {
 
     private UUID id;
     private String componentName;
