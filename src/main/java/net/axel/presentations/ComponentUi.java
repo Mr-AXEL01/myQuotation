@@ -103,7 +103,7 @@ public class ComponentUi {
 
         materials
                 .forEach(material -> {
-                    System.out.print("- " + material.materialName()+ ": ");
+                    System.out.print("\t\t- " + material.materialName()+ ": ");
                     System.out.print((material.materialCost() * material.quantity() * material.materialEfficiencyFactory()) + material.transportCost());
                     System.out.println(" (quantity: "+ material.quantity()+", unit cost: "+ material.materialCost()+ "$, quality: "+ material.materialEfficiencyFactory()+ ", transport: "+ material.transportCost()+"$).");
                 });
@@ -124,7 +124,7 @@ public class ComponentUi {
 
         labors
                 .forEach(labor -> {
-                    System.out.print("- "+ labor.laborName()+ ": ");
+                    System.out.print("\t\t- "+ labor.laborName()+ ": ");
                     System.out.print(labor.laborCost() * labor.duration() * labor.laborEfficiencyFactor());
                     System.out.println(" (hourly rate: "+ labor.laborCost() +"$, hours worked: "+ labor.duration() +"productivity: "+ labor.laborEfficiencyFactor());
                 });
