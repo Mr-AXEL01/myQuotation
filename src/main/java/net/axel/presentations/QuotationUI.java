@@ -46,6 +46,15 @@ public class QuotationUI {
         System.out.println("3- Total cost before margin: " + totalCost + "$");
         double finalTotalCost = calculateTotalCostWithMargin(totalCost, profitMargin);
 
+        Boolean isProfessional= selectedClient.getIsProfessional();
+
+        if(isProfessional) {
+            System.out.println("\n === special discount === ");
+            System.out.println("please enter discounts percentage (in decimal form, e.g., 0.2 for 20%) :");
+            double discount = Double.parseDouble(scanner.nextLine());
+            finalTotalCost -= (finalTotalCost * discount);
+        }
+
         System.out.println("\n** Final Total Cost of the Project: " + finalTotalCost + "$ **");
 
         return finalTotalCost;
