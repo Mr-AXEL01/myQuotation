@@ -12,10 +12,7 @@ import net.axel.models.entities.Project;
 import net.axel.models.enums.ComponentType;
 
 import net.axel.models.enums.ProjectStatus;
-import net.axel.repositories.implementations.ClientRepository;
-import net.axel.repositories.implementations.LaborRepository;
-import net.axel.repositories.implementations.MaterialRepository;
-import net.axel.repositories.implementations.QuotationRepository;
+import net.axel.repositories.implementations.*;
 import net.axel.services.implementations.*;
 import net.axel.services.interfaces.IComponentService;
 import net.axel.services.interfaces.IProjectService;
@@ -26,8 +23,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ProjectUi {
-    private final List<MaterialDto> materials ;
-    private final List<LaborDto> labors ;
+    private  List<MaterialDto> materials ;
+    private  List<LaborDto> labors ;
     private final IProjectService projectService;
     private final IComponentService<Material, MaterialDto> materielService;
     private final IComponentService<Labor, LaborDto> laborService;
@@ -41,7 +38,7 @@ public class ProjectUi {
         this.projectHelper = new ProjectHelper(new Scanner(System.in));
         this.materielService = materielService;
         this.laborService = laborService;
-        this.quotationUi = new QuotationUI(new QuotationService(new QuotationRepository()));
+        this.quotationUi = new QuotationUI(new QuotationService(new QuotationRepository(),new ProjectService(new ProjectRepository(), new ClientService(new ClientRepository()))));
         this.componentUi = new ComponentUi(new MaterialService(new MaterialRepository()), new LaborService(new LaborRepository()));
         this.materials = new ArrayList<>();
         this.labors = new ArrayList<>();
@@ -79,13 +76,17 @@ public class ProjectUi {
             System.out.print("Enter the area of the kitchen (in m2): ");
             double surface = Double.parseDouble(scanner.nextLine());
 
-            componentUi.addMaterials();
-            componentUi.addLabors();
+            materials = componentUi.addMaterials();
+            labors = componentUi.addLabors();
+
+            System.out.println("\n \t\t\t--- Calculation of the total cost ---\n");
 
             double vat = projectHelper.requestVat();
             double profitMargin = projectHelper.requestProfitMargin();
 
-            double finalTotalCost = quotationUi.displayProjectCostSummary(selectedClient, projectName, surface, vat, profitMargin);
+            System.out.println("\nCalculation of the current cost...\n");
+
+            double finalTotalCost = quotationUi.displayProjectCostSummary(selectedClient, projectName, surface, vat, profitMargin, materials, labors);
 
             ProjectDto dto = new ProjectDto(
                     projectName,
@@ -110,8 +111,8 @@ public class ProjectUi {
     }
 
     private void displayExistingProjects() {
-        System.out.println("Displaying existing projects...");
-        // To be implemented
+        System.out.println("\n=== Displaying existing projects===\n");
+
     }
 
     private void calculateProjectCost() {
