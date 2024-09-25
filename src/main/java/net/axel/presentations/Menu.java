@@ -13,6 +13,7 @@ import net.axel.services.implementations.LaborService;
 import net.axel.services.implementations.MaterialService;
 import net.axel.services.implementations.ProjectService;
 import net.axel.services.interfaces.IComponentService;
+import net.axel.utils.Validation;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -26,7 +27,7 @@ public class Menu {
     }
 
     public void showMainMenu() throws SQLException {
-        int choice;
+        int choice = -1;
         do {
             System.out.println("\n=== Main Menu ===\n");
             System.out.println("1. Client Management");
@@ -34,7 +35,14 @@ public class Menu {
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
 
-            choice = Integer.parseInt(scanner.nextLine());
+            String input = scanner.nextLine();
+
+            if (Validation.isValidInteger(input)) {
+                choice = Integer.parseInt(input);
+            } else {
+                System.out.println("Invalid input. Please enter a valid number (0, 1, or 2).");
+                continue;
+            }
 
             switch (choice) {
                 case 1:

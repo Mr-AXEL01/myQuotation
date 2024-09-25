@@ -21,7 +21,7 @@ public class ClientUi {
     }
 
     public void showMenu() {
-        int choice;
+        int choice = -1;
         do {
             System.out.println("\nClient Management Menu:\n");
             System.out.println("1. Add Client");
@@ -31,7 +31,16 @@ public class ClientUi {
             System.out.println("5. Delete Client");
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            choice = Integer.parseInt(clientHelper.getScanner().nextLine());
+
+            String input = clientHelper.getScanner().nextLine();
+
+            if (Validation.isValidInteger(input)) {
+                choice = Integer.parseInt(input);
+            } else {
+                System.out.println("Invalid input. Please enter a valid number (0-5).");
+                continue;
+            }
+
 
             switch (choice) {
                 case 1:

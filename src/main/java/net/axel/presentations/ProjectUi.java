@@ -16,6 +16,7 @@ import net.axel.repositories.implementations.*;
 import net.axel.services.implementations.*;
 import net.axel.services.interfaces.IComponentService;
 import net.axel.services.interfaces.IProjectService;
+import net.axel.utils.Validation;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -47,25 +48,32 @@ public class ProjectUi {
     }
 
     public void showMenu() {
-        int choice;
+        int choice = -1;
         do {
             System.out.println("\n=== Project Menu ===\n");
             System.out.println("1. Create a new project");
             System.out.println("2. View existing projects");
             System.out.println("3. Calculate the cost of a project");
-            System.out.println("4. Exit");
+            System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
 
-            choice = Integer.parseInt(scanner.nextLine());
+            String input = scanner.nextLine();
+
+            if (Validation.isValidInteger(input)) {
+                choice = Integer.parseInt(input);
+            } else {
+                System.out.println("Invalid input. Please enter a valid number (0-3).");
+                continue;
+            }
 
             switch (choice) {
                 case 1 -> addProject();
                 case 2 -> displayExistingProjects();
                 case 3 -> calculateProjectCost();
-                case 4 -> System.out.println("Exiting...");
+                case 0 -> System.out.println("Exiting...");
                 default -> System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 4);
+        } while (choice != 0);
     }
 
     private void addProject() {
