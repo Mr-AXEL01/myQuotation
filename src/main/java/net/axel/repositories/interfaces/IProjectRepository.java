@@ -13,4 +13,6 @@ public interface IProjectRepository {
     Optional<Project> findProjectById(UUID id);
 
     List<Project> findAllProjects();
+
+    Project updateProject(UUID oldProjectId, Project project);
 }
