@@ -9,6 +9,7 @@ import net.axel.utils.Validation;
 
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class ProjectHelper {
 
@@ -31,6 +32,11 @@ public class ProjectHelper {
             }
         } while (!Validation.isNotEmpty(name));
         return name;
+    }
+
+    public UUID requestProjectId() {
+        System.out.println("Enter the project ID : ");
+        return UUID.fromString(scanner.nextLine());
     }
 
     public Client associateProjectWithClient() {
@@ -129,6 +135,13 @@ public class ProjectHelper {
                 client.getName(),
                 professionalStatus);
         System.out.println("╠═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+    }
+
+    public Boolean confirmAndProceedWithProject() {
+        System.out.print("Would you like to continue with this project? (y/n): ");
+        String confirm = scanner.nextLine();
+
+        return confirm.equalsIgnoreCase("y");
     }
 
 }
