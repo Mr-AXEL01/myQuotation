@@ -82,12 +82,12 @@ public class QuotationUI {
         System.out.println("\n \t\t\t\t** End of project **\n");
     }
 
-//    public Boolean confirmQuotationStatus() {
-//        System.out.println("Would you like to save the quote? (y/n) :");
-//        String confirm = scanner.nextLine();
-//
-//        return confirm.equalsIgnoreCase("y");
-//    }
+    public Boolean confirmQuotationStatus() {
+        System.out.println("Would you like to save the quote? (y/n) :");
+        String confirm = scanner.nextLine();
+
+        return confirm.equalsIgnoreCase("y");
+    }
 
 
 }
