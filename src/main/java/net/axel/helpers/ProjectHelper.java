@@ -1,6 +1,7 @@
 package net.axel.helpers;
 
 import net.axel.models.entities.Client;
+import net.axel.models.entities.Project;
 import net.axel.presentations.ClientUi;
 import net.axel.repositories.implementations.ClientRepository;
 import net.axel.services.implementations.ClientService;
@@ -8,6 +9,7 @@ import net.axel.utils.Validation;
 
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class ProjectHelper {
 
@@ -30,6 +32,11 @@ public class ProjectHelper {
             }
         } while (!Validation.isNotEmpty(name));
         return name;
+    }
+
+    public UUID requestProjectId() {
+        System.out.println("Enter the project ID : ");
+        return UUID.fromString(scanner.nextLine());
     }
 
     public Client associateProjectWithClient() {
@@ -105,4 +112,36 @@ public class ProjectHelper {
         }
         return 0.0;
     }
+
+    public void tableHeader() {
+        System.out.println("╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+        System.out.printf("║ %-36s ║ %-20s ║ %-8s ║ %-10s ║ %-10s ║ %-16s ║ %-12s  ║%n",
+                "Project ID", "Project Name", "Surface", "Cost", "Profit (%)", "Client Name", "Professional");
+        System.out.println("╠═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+    }
+
+    public void tableBody(Project project) {
+        Client client = project.getClient();
+        String professionalStatus = (client.getIsProfessional() != null)
+                ? (client.getIsProfessional() ? "Professional " : "Normal client")
+                : "Unknown";
+
+        System.out.printf("║ %-36s ║ %-20s ║ %-8.2f ║ %-10.2f ║ %-10d ║ %-16s ║ %-12s ║%n",
+                project.getId(),
+                project.getName(),
+                project.getSurface(),
+                project.getTotalCost(),
+                (int) (project.getProfitMargin() * 100),
+                client.getName(),
+                professionalStatus);
+        System.out.println("╠═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+    }
+
+    public Boolean confirmAndProceedWithProject() {
+        System.out.print("Would you like to continue with this project? (y/n): ");
+        String confirm = scanner.nextLine();
+
+        return confirm.equalsIgnoreCase("y");
+    }
+
 }

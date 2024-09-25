@@ -76,6 +76,26 @@ public class ProjectRepository implements IProjectRepository {
         return projects;
     }
 
+    @Override
+    public Project updateProject(UUID oldProjectId, Project project) {
+        final String query = "UPDATE "+ tableName + " SET (iname = ?, surface = ?, profit_margin = ?, total_cost = ?, project_status = ?," +
+                " client_id = ?) WHERE id = oldProjectId";
+        try(PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, project.getName());
+            stmt.setDouble(2, project.getSurface());
+            stmt.setDouble(3, project.getProfitMargin());
+            stmt.setDouble(4, project.getTotalCost());
+            stmt.setString(5, project.getProjectStatus().name());
+            stmt.setObject(6, project.getClient().getId());
+            stmt.setObject(7, project.getId());
+
+            stmt.executeUpdate();
+        }catch (SQLException e) {
+            throw new RuntimeException("Error updating project : " + e.getMessage());
+        }
+        return  project;
+    }
+
     private Project mapToProject(ResultSet rst) throws SQLException {
         UUID projectId = UUID.fromString(rst.getString("id"));
         String projectName = rst.getString("name");

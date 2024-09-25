@@ -7,6 +7,7 @@ import net.axel.repositories.interfaces.IQuotationRepository;
 import net.axel.services.interfaces.IProjectService;
 import net.axel.services.interfaces.IQuotationService;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class QuotationService implements IQuotationService {
@@ -20,6 +21,11 @@ public class QuotationService implements IQuotationService {
 
 
     public Quotation addQuotation(QuotationDto dto){
+        final LocalDate issuedDate = dto.issuedDate();
+        final LocalDate validityDate = dto.validityDate();
+        if(checkDates(issuedDate, validityDate)) {
+            return null;
+        }
         Project project = projectService.findProjectById(dto.projectId());
         Quotation quotation = new Quotation(
                 UUID.randomUUID(),
@@ -30,5 +36,9 @@ public class QuotationService implements IQuotationService {
                 project
         );
         return quotationRepository.addQuotation(quotation);
+    }
+
+    private Boolean checkDates(LocalDate issuedDate, LocalDate validityDate) {
+        return issuedDate.isAfter(validityDate);
     }
 }

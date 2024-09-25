@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class ProjectUi {
     private  List<MaterialDto> materials ;
@@ -113,11 +114,72 @@ public class ProjectUi {
     private void displayExistingProjects() {
         System.out.println("\n=== Displaying existing projects===\n");
 
+        List<Project> projects = projectService.findAllProjects();
+        if(projects.isEmpty()){
+            System.out.println("No project found for the moments.");
+            return;
+        }
+        projectHelper.tableHeader();
+
+        projects.forEach(projectHelper::tableBody);
     }
 
     private void calculateProjectCost() {
-        System.out.println("Calculating project cost...");
-        // To be implemented
+        System.out.println("\n=== Calculating project cost ===");
+
+        UUID projectId = projectHelper.requestProjectId();
+
+        Project existedProject = projectService.findProjectById(projectId);
+        if(existedProject != null) {
+            projectHelper.tableHeader();
+            projectHelper.tableBody(existedProject);
+            if(projectHelper.confirmAndProceedWithProject()) {
+
+                Client selectedClient = existedProject.getClient();
+                String projectName = existedProject.getName();
+                double surface = existedProject.getSurface();
+                double profitMargin = existedProject.getProfitMargin();
+                ProjectStatus projectStatus = existedProject.getProjectStatus();
+
+                if(!projectService.checkProjectStatus(projectStatus)) {
+                    System.out.println("Project already completed.");
+                    return;
+                }
+
+                materials = componentUi.addMaterials();
+                labors = componentUi.addLabors();
+
+                System.out.println("\n \t\t\t--- Calculation of the total cost ---\n");
+
+                double vat = projectHelper.requestVat();
+
+                System.out.println("\nCalculation of the current cost...\n");
+
+                double finalTotalCost = quotationUi.displayProjectCostSummary(selectedClient, projectName, surface, vat, profitMargin, materials, labors);
+
+                ProjectDto dto = new ProjectDto(
+                        projectName,
+                        surface,
+                        profitMargin,
+                        finalTotalCost,
+                        ProjectStatus.IN_PROGRESS,
+                        selectedClient.getId()
+                );
+
+                Project project = projectService.updateProject(existedProject, dto);
+
+                materielService.save(materials, vat, project);
+                laborService.save(labors, vat, project);
+
+                quotationUi.saveQuotation(project);
+
+                projectHelper.tableHeader();
+                projectHelper.tableBody(project);
+            }
+        } else {
+            System.out.println("Error getting project with ID : "+ projectId);
+        }
+
     }
 
 
