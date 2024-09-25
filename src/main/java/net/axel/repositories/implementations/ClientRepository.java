@@ -75,7 +75,8 @@ public class ClientRepository implements IClientRepository {
     public List<Client> findAllClients() {
         final String query = "SELECT * FROM " + tableName + " WHERE deleted_at IS NULL";
         List<Client> clients = new ArrayList<>();
-        try (Statement stmt = connection.createStatement(); ResultSet rst = stmt.executeQuery(query)) {
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rst = stmt.executeQuery(query);
             while (rst.next()) {
                 clients.add(mapToClient(rst));
             }
