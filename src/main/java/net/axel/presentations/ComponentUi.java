@@ -9,6 +9,7 @@ import net.axel.services.interfaces.IComponentService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class ComponentUi {
@@ -16,7 +17,7 @@ public class ComponentUi {
     private final IComponentService<Material, MaterialDto> materielService;
     private final IComponentService<Labor, LaborDto> laborService;
     private final List<MaterialDto> materials;
-    private final List<LaborDto> labors ;
+    private final List<LaborDto> labors;
     private final Scanner scanner;
 
     public ComponentUi(IComponentService<Material, MaterialDto> materielService, IComponentService<Labor, LaborDto> laborService) {
@@ -27,7 +28,7 @@ public class ComponentUi {
         this.scanner = new Scanner(System.in);
     }
 
-    public void addMaterials() {
+    public List<MaterialDto> addMaterials() {
         System.out.println("\n=== Add Material ===");
 
         System.out.print("Enter the name of the material: ");
@@ -61,9 +62,10 @@ public class ComponentUi {
         if (scanner.nextLine().equalsIgnoreCase("y")) {
             addMaterials();
         }
+        return materials;
     }
 
-    public void addLabors() {
+    public List<LaborDto> addLabors() {
         System.out.println("\n=== Add Labor ===");
 
         System.out.print("Enter the name of the labor: ");
@@ -93,10 +95,18 @@ public class ComponentUi {
         if (scanner.nextLine().equalsIgnoreCase("y")) {
             addLabors();
         }
+        return labors;
     }
 
-    public double calculateTotalMaterialCost(double vat) {
-        System.out.println("\n=== Material Costs ===");
+    public double calculateTotalMaterialCost(double vat, List<MaterialDto> materials) {
+        System.out.println("\n1- Material Costs");
+
+        materials
+                .forEach(material -> {
+                    System.out.print("- " + material.materialName()+ ": ");
+                    System.out.print((material.materialCost() * material.quantity() * material.materialEfficiencyFactory()) + material.transportCost());
+                    System.out.println(" (quantity: "+ material.quantity()+", unit cost: "+ material.materialCost()+ "$, quality: "+ material.materialEfficiencyFactory()+ ", transport: "+ material.transportCost()+"$).");
+                });
 
         double totalMaterialCost = materielService.calculateTotalCost(materials);
 
@@ -104,21 +114,28 @@ public class ComponentUi {
 
         if (vat > 0) {
             totalMaterialCost = materielService.addVat(totalMaterialCost, vat);
-            System.out.println("**Total Material Cost with VAT (" + (int)(vat * 100) + "%): " + totalMaterialCost + " $");
+            System.out.println("**Total Material Cost with VAT (" + (int) (vat * 100) + "%): " + totalMaterialCost + " $");
         }
         return totalMaterialCost;
     }
 
-    public double calculateTotalLaborCost(double vat) {
-        System.out.println("\n=== Labor Costs ===");
+    public double calculateTotalLaborCost(double vat, List<LaborDto> labors) {
+        System.out.println("\n2- Labor Costs");
+
+        labors
+                .forEach(labor -> {
+                    System.out.print("- "+ labor.laborName()+ ": ");
+                    System.out.print(labor.laborCost() * labor.duration() * labor.laborEfficiencyFactor());
+                    System.out.println(" (hourly rate: "+ labor.laborCost() +"$, hours worked: "+ labor.duration() +"productivity: "+ labor.laborEfficiencyFactor());
+                });
 
         double totalLaborCost = laborService.calculateTotalCost(labors);
 
         System.out.println("Total Labor Cost before VAT: " + totalLaborCost + " $");
 
         if (vat > 0) {
-            totalLaborCost = laborService.addVat(totalLaborCost ,vat);
-            System.out.println("Total Labor Cost with VAT (" + (int)(vat * 100) + "%): " + totalLaborCost + " $");
+            totalLaborCost = laborService.addVat(totalLaborCost, vat);
+            System.out.println("Total Labor Cost with VAT (" + (int) (vat * 100) + "%): " + totalLaborCost + " $");
         }
         return totalLaborCost;
     }
