@@ -61,23 +61,26 @@ public class QuotationUI {
 
     public void saveQuotation(Project project) {
         System.out.println("\n=== Registration of the Quote ===");
+        Quotation quotation;
+        do {
 
-        System.out.println("Enter the date of issue of the quote (format: yyyy-mm-dd) : ");
-        LocalDate issuedDate = LocalDate.parse(scanner.nextLine());
+            System.out.println("Enter the date of issue of the quote (format: yyyy-mm-dd) : ");
+            LocalDate issuedDate = LocalDate.parse(scanner.nextLine());
 
-        System.out.println("Enter the validity date of the quote (format: yyyy-mm-dd) : ");
-        LocalDate validityDate = LocalDate.parse(scanner.nextLine());
+            System.out.println("Enter the validity date of the quote (format: yyyy-mm-dd) : ");
+            LocalDate validityDate = LocalDate.parse(scanner.nextLine());
 
-        Boolean accepted = confirmQuotationStatus();
+            Boolean accepted = confirmQuotationStatus();
 
-        QuotationDto dto = new QuotationDto(
-                project.getTotalCost(),
-                issuedDate,
-                validityDate,
-                accepted,
-                project.getId()
-        );
-        Quotation quotation = quotationService.addQuotation(dto);
+            QuotationDto dto = new QuotationDto(
+                    project.getTotalCost(),
+                    issuedDate,
+                    validityDate,
+                    accepted,
+                    project.getId()
+            );
+            quotation = quotationService.addQuotation(dto);
+        } while (quotation == null);
 
         System.out.println("\n \t\t\t\t** End of project **\n");
     }
