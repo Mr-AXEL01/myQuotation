@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 public class MaterialRepository implements IComponentRepository<Material> {
 
-    final String tableName = "Material";
+    final String tableName = "materials";
     private final Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public MaterialRepository() throws SQLException {

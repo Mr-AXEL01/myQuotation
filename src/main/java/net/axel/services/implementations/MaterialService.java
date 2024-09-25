@@ -18,6 +18,7 @@ public class MaterialService implements IComponentService<Material, MaterialDto>
         this.materialRepository = materialRepository;
     }
 
+    @Override
     public List<Material> save(List<MaterialDto> materials, Double vat, Project project) {
         return materials.stream()
                 .map(materialDto -> {
@@ -35,5 +36,17 @@ public class MaterialService implements IComponentService<Material, MaterialDto>
                     return materialRepository.save(material);
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Double calculateTotalCost(List<MaterialDto> dto) {
+        return dto.stream()
+                .mapToDouble(material -> (material.materialCost() * material.quantity() * material.materialEfficiencyFactory()) + material.transportCost())
+                .sum();
+    }
+
+    @Override
+    public Double addVat(Double materialCost, Double vat) {
+        return materialCost + (materialCost + vat);
     }
 }
