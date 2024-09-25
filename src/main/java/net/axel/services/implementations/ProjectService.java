@@ -8,6 +8,7 @@ import net.axel.repositories.interfaces.IProjectRepository;
 import net.axel.services.interfaces.IClientService;
 import net.axel.services.interfaces.IProjectService;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ProjectService implements IProjectService {
@@ -19,6 +20,7 @@ public class ProjectService implements IProjectService {
         this.clientService = clientService;
     }
 
+    @Override
     public Project addProject(ProjectDto dto) {
         Client client = clientService.findClientById(dto.clientId());
 
@@ -33,6 +35,17 @@ public class ProjectService implements IProjectService {
         );
 
         return projectRepository.addProject(project);
+    }
+
+    @Override
+    public Project findProjectById(UUID id) {
+        return projectRepository.findProjectById(id)
+                .orElseThrow(() -> new RuntimeException("Error find project By ID : " + id));
+    }
+
+    @Override
+    public List<Project> findAllProjects() {
+        return projectRepository.findAllProjects();
     }
 
 }
